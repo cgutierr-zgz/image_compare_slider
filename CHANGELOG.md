@@ -1,3 +1,7 @@
+# 2.0.0+1
+
+- fix: updates to the pipeline
+
 # 2.0.0
 
 - feat: removes the imageWidth and imageHeight parameters
