@@ -1,0 +1,30 @@
+name: image_compare_slider
+description: Easily compare two images with a slider
+version: 1.0.0
+
+repository: https://github.com/cgutierr-zgz/image_compare_slider
+homepage: https://github.com/cgutierr-zgz/image_compare_slider
+issue_tracker: https://github.com/cgutierr-zgz/image_compare_slider/issues
+documentation: https://pub.dev/documentation/image_compare_slider/latest/
+
+screenshots:
+  - description: 'Example of the Image Compare Slider'
+    path: screenshots/example.png
+
+environment:
+  sdk: ">=2.19.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^0.3.0
+  test: ^1.19.2
+  very_good_analysis: ^4.0.0
+
+flutter:
+  assets:
+    - assets/images/

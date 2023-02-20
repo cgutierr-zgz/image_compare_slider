@@ -1,0 +1,52 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2.8.0
+        with:
+          flutter-version: "3.7.3"
+          channel: "stable"
+      - name: Install dependencies 📦
+        run: flutter pub get
+      - name: Analyze 🔍
+        run: flutter analyze
+      - name: Check Publish Warnings 🙏🏽
+        run: dart pub publish --dry-run
+      - name: Clean example project 🧹
+        run: cd example && flutter clean .
+
+        # Pub credentials can be fount at:
+        #
+        # MAC: ~/Library/Application Support/dart as `pub-credentials.json`
+        #
+        # WINDOWS: %APPDATA%/dart/pub-credentials.json
+        #
+        # LINUX: $XDG_CONFIG_HOME/dart/pub-credentials.json
+        #        or
+        #        $HOME/.config/dart/pub-credentials.json
+      - name: Publish to Pub 🚀
+        run: |
+          mkdir -p $HOME/.config/dart
+          cat <<EOF > $HOME/.config/dart/pub-credentials.json
+          ${{ secrets.PUB_JSON }}
+          EOF
+          dart pub publish -f
+
+      - name: Create Release 📦
+        run: |
+          TAG_VERSION=$(cat pubspec.yaml | grep version | cut -d " " -f 2 | tr -d '"')
+          gh release create $TAG_VERSION -t $TAG_VERSION --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      # TODO(carlito): Create automated release -> https://dart.dev/tools/pub/automated-publishing
+      # TODO(carlito): Add deployment to GitHub Pages
