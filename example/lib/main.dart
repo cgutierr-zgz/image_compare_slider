@@ -113,7 +113,7 @@ class _AppState extends State<_App> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Divider width: ${dividerWidth.toStringAsFixed(2)}',
+                'Position: ${position.toStringAsFixed(2)}',
                 style: const TextStyle(color: Colors.white),
               ),
               Slider(
