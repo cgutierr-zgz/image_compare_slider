@@ -1,15 +1,7 @@
-// ignore_for_file: unused_import, use_build_context_synchronously
-
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 
 part 'slider_clipper.dart';
-part 'handle.dart';
+part 'handle_painter.dart';
 
 /// Slider direction.
 enum SliderDirection {
@@ -32,8 +24,6 @@ enum SliderDirection {
 /// Usage:
 /// ```dart
 ///  ImageCompareSlider(
-///    imageHeight: 500,
-///    imageWidth: 500,
 ///    itemOne: const AssetImage('assets/render.png'),
 ///    itemTwo: const AssetImage('assets/render_oc.png'),
 ///  )
@@ -46,14 +36,14 @@ class ImageCompareSlider extends StatefulWidget {
   ///
   /// {@macro flutter_compare_slider}
   const ImageCompareSlider({
-    required this.imageWidth,
-    required this.imageHeight,
     required this.itemOne,
     required this.itemTwo,
     super.key,
     this.changePositionOnHover = false,
-    this.handle,
+    this.handleRadius = 20,
+    this.fillHandle = false,
     this.hideHandle = false,
+    this.handlePosition = 0.5,
     this.onPositionChange,
     this.direction = SliderDirection.leftToRight,
     this.position = 0.5,
@@ -62,32 +52,36 @@ class ImageCompareSlider extends StatefulWidget {
   })  : portrait = direction == SliderDirection.topToBottom ||
             direction == SliderDirection.bottomToTop,
         assert(
-          imageWidth > 0 && imageHeight > 0,
-          'imageWidth and imageHeight must be greater than 0',
-        ),
-        assert(
           position >= 0 && position <= 1,
           'initialPosition must be between 0 and 1',
         ),
         assert(
+          handlePosition >= 0 && handlePosition <= 1,
+          'handlePosition must be between 0 and 1',
+        ),
+        assert(
           dividerWidth >= 0,
           'dividerWidth must be greater than 0',
+        ),
+        assert(
+          handleRadius >= 0,
+          'handleRadius must be greater or equal to 0',
         );
-
-  /// Width of image.
-  final double imageWidth;
-
-  /// Height of image.
-  final double imageHeight;
 
   /// Whether the slider should follow the pointer on hover.
   final bool changePositionOnHover;
 
-  /// Custom handle component.
-  final Widget? handle;
+  /// Handle size.
+  final double handleRadius;
+
+  /// Wether to fill the handle.
+  final bool fillHandle;
 
   /// Whether to hide the handle.
   final bool hideHandle;
+
+  /// Where to place the handle.
+  final double handlePosition;
 
   /// First component to show in slider.
   final ImageProvider<Object> itemOne;
@@ -152,65 +146,45 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.imageHeight,
-      width: widget.imageWidth,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final child = GestureDetector(
-            onTapDown: (details) => onDetection(details.globalPosition),
-            onPanUpdate: (details) => onDetection(details.globalPosition),
-            onPanEnd: (_) => updatePosition(position),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image(
-                    image: widget.itemOne,
-                    fit: BoxFit.cover,
-                    width: widget.imageWidth,
-                    height: widget.imageHeight,
-                  ),
-                ),
-                Positioned.fill(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ClipRect(
-                        clipper: _SliderClipper(
-                          position: position,
-                          direction: widget.direction,
-                        ),
-                        child: Image(
-                          image: widget.itemTwo,
-                          fit: BoxFit.cover,
-                          width: widget.imageWidth,
-                          height: widget.imageHeight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                _Handle(
-                  position: position,
-                  dividerColor: widget.dividerColor,
-                  dividerWidth: widget.dividerWidth,
-                  portrait: widget.portrait,
-                  constraints: constraints,
-                  hideHandle: widget.hideHandle,
-                  handle: widget.handle,
-                ),
-              ],
+    final child = Stack(
+      children: [
+        Image(image: widget.itemOne, fit: BoxFit.cover),
+        ClipRect(
+          clipper: _SliderClipper(
+            position: position,
+            direction: widget.direction,
+          ),
+          child: Image(image: widget.itemTwo, fit: BoxFit.cover),
+        ),
+        GestureDetector(
+          onTapDown: (details) => onDetection(details.globalPosition),
+          onPanUpdate: (details) => onDetection(details.globalPosition),
+          onPanEnd: (_) => updatePosition(position),
+          child: CustomPaint(
+            painter: _HandlePainter(
+              position: position,
+              color: widget.dividerColor,
+              strokeWidth: widget.dividerWidth,
+              portrait: widget.portrait,
+              fillHandle: widget.fillHandle,
+              handleRadius: widget.handleRadius,
+              hideHandle: widget.hideHandle,
+              handlePosition: widget.handlePosition,
             ),
-          );
-
-          return widget.changePositionOnHover
-              ? MouseRegion(
-                  onHover: (event) => onDetection(event.position),
-                  child: child,
-                )
-              : child;
-        },
-      ),
+            child: Opacity(
+              opacity: 0,
+              child: Image(image: widget.itemOne, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+      ],
     );
+
+    return widget.changePositionOnHover
+        ? MouseRegion(
+            onHover: (event) => onDetection(event.position),
+            child: child,
+          )
+        : child;
   }
 }

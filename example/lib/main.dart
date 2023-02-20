@@ -35,7 +35,9 @@ class _AppState extends State<_App> {
   bool reactOnHover = false;
   bool hideHandle = false;
   double position = 0.5;
-  Widget? handle;
+  double handlePosition = 0.5;
+  double handleSize = 20;
+  bool fillHandle = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,15 +89,19 @@ class _AppState extends State<_App> {
               const SizedBox(height: 20),
               Center(
                 child: Container(
+                  height: 250,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: ImageCompareSlider(
-                    imageHeight: 300,
-                    imageWidth: 250,
-                    itemOne: const AssetImage('assets/images/render.png'),
-                    itemTwo: const AssetImage('assets/images/render_oc.png'),
+                    //itemOne: Image.asset('assets/images/render.png'),
+                    itemTwo: const NetworkImage(
+                      'https://cdnb.artstation.com/p/assets/images/images/045/075/993/large/miriam-raya-garcia-render1.jpg?1641862646',
+                    ),
+                    itemOne: const AssetImage(
+                      'assets/images/render_oc.png',
+                    ),
                     /* Optional */
                     changePositionOnHover: reactOnHover,
                     direction: direction,
@@ -106,75 +112,108 @@ class _AppState extends State<_App> {
                       setState(() => this.position = position);
                     },
                     hideHandle: hideHandle,
-                    handle: handle,
-                    //handle: const SizedBox(),
+                    handlePosition: handlePosition,
+                    fillHandle: fillHandle,
+                    handleRadius: handleSize,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Position: ${position.toStringAsFixed(2)}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              Slider(
-                value: position,
-                min: 0,
-                max: 1,
-                onChanged: (value) => setState(() => position = value),
-              ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const Text(
-                    'Custom handle',
-                    style: TextStyle(color: Colors.white),
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'Hide handle',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          CupertinoSwitch(
+                            value: hideHandle,
+                            onChanged: (value) =>
+                                setState(() => hideHandle = value),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Change position on hover',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          CupertinoSwitch(
+                            value: reactOnHover,
+                            onChanged: (value) =>
+                                setState(() => reactOnHover = value),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Fill handle',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          CupertinoSwitch(
+                            value: fillHandle,
+                            onChanged: (value) =>
+                                setState(() => fillHandle = value),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  CupertinoSwitch(
-                    value: handle != null,
-                    onChanged: (value) => setState(
-                      () => handle = value
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            )
-                          : null,
-                    ),
-                  ),
-                  const Spacer(),
+                  Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      Text(
+                        'Position: ${position.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Slider(
+                        value: position,
+                        min: 0,
+                        max: 1,
+                        onChanged: (value) => setState(() => position = value),
+                      ),
+                      Text(
+                        'Divider width: ${dividerWidth.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Slider(
+                        value: dividerWidth,
+                        min: 0,
+                        max: 50,
+                        onChanged: (value) =>
+                            setState(() => dividerWidth = value),
+                      ),
+                      Text(
+                        'Handle size: ${handleSize.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Slider(
+                        value: handleSize,
+                        min: 0,
+                        max: 50,
+                        onChanged: (value) =>
+                            setState(() => handleSize = value),
+                      ),
+                      Text(
+                        'Handle position: ${handlePosition.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Slider(
+                        value: handlePosition,
+                        min: 0,
+                        max: 1,
+                        onChanged: (value) =>
+                            setState(() => handlePosition = value),
+                      ),
+                    ],
+                  )
                 ],
               ),
-              Row(
-                children: [
-                  const Text(
-                    'Hide handle',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  CupertinoSwitch(
-                    value: hideHandle,
-                    onChanged: (value) => setState(() => hideHandle = value),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Change position on hover',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  CupertinoSwitch(
-                    value: reactOnHover,
-                    onChanged: (value) => setState(() => reactOnHover = value),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-              const SizedBox(height: 20),
               Text(
                 'Slider direction: ${direction.toString().split('.').last}',
                 style: const TextStyle(color: Colors.white),
@@ -211,16 +250,6 @@ class _AppState extends State<_App> {
                   );
                 }),
               ),
-              Text(
-                'Divider width: ${dividerWidth.toStringAsFixed(2)}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              Slider(
-                value: dividerWidth,
-                min: 0,
-                max: 10,
-                onChanged: (value) => setState(() => dividerWidth = value),
-              ),
               const Text(
                 'Divider Color',
                 style: TextStyle(color: Colors.white),
@@ -248,7 +277,8 @@ class _AppState extends State<_App> {
             ],
           ),
         ),
-      ), /*
+      ),
+      /*
       bottomNavigationBar: BottomAppBar(
         color: Colors.grey.shade900,
         child: const Padding(

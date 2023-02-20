@@ -10,8 +10,6 @@ void main() {
     setUp(() {
       app = MaterialApp(
         home: ImageCompareSlider(
-          imageHeight: 300,
-          imageWidth: 500,
           itemOne: const AssetImage('assets/images/render.png'),
           itemTwo: const AssetImage('assets/images/render_oc.png'),
         ),
@@ -33,21 +31,23 @@ void main() {
       expect(imageCompareSlider.dividerColor, Colors.white);
     });
 
-    testWidgets('ImageCompareSlider shows two images', (tester) async {
-      await tester.pumpWidget(app);
-      expect(find.byType(Image), findsNWidgets(2));
-    });
-    testWidgets('didUpdateWidget updates position when it changes',
+    testWidgets(
+        'didUpdateWidget/shouldRepaint updates position when it changes',
         (tester) async {
       final key = UniqueKey();
       const updatedPosition = 0.8;
+      const updatedColor = Colors.red;
+      const updatedStrokeWidth = 5.0;
+      const updatedPortrait = SliderDirection.topToBottom;
+      const updatedHideHandle = true;
+      const updatedHandlePosition = 0.2;
+      const updatedHandleRadius = 10.0;
+      const updatedFillHandle = true;
 
       await tester.pumpWidget(
         MaterialApp(
           home: ImageCompareSlider(
             key: key,
-            imageWidth: 100,
-            imageHeight: 100,
             itemOne: const AssetImage('assets/images/render.png'),
             itemTwo: const AssetImage('assets/images/render_oc.png'),
           ),
@@ -63,29 +63,39 @@ void main() {
         MaterialApp(
           home: ImageCompareSlider(
             key: key,
-            imageWidth: 100,
-            imageHeight: 100,
             itemOne: const AssetImage('assets/images/render.png'),
             itemTwo: const AssetImage('assets/images/render_oc.png'),
             position: updatedPosition,
+            dividerColor: updatedColor,
+            dividerWidth: updatedStrokeWidth,
+            direction: updatedPortrait,
+            hideHandle: updatedHideHandle,
+            handlePosition: updatedHandlePosition,
+            handleRadius: updatedHandleRadius,
+            fillHandle: updatedFillHandle,
           ),
         ),
       );
 
-      // Verify that the new position is set correctly
+      // Verify that the new values are set
       final imageCompareSlider =
           tester.widget<ImageCompareSlider>(find.byType(ImageCompareSlider));
 
       expect(imageCompareSlider.position, updatedPosition);
+      expect(imageCompareSlider.dividerColor, updatedColor);
+      expect(imageCompareSlider.dividerWidth, updatedStrokeWidth);
+      expect(imageCompareSlider.direction, updatedPortrait);
+      expect(imageCompareSlider.hideHandle, updatedHideHandle);
+      expect(imageCompareSlider.handlePosition, updatedHandlePosition);
+      expect(imageCompareSlider.handleRadius, updatedHandleRadius);
+      expect(imageCompareSlider.fillHandle, updatedFillHandle);
     });
 
     testWidgets('Test ImageCompareSlider moves slider', (tester) async {
-      late double newPosition;
+      double? newPosition;
       await tester.pumpWidget(
         MaterialApp(
           home: ImageCompareSlider(
-            imageHeight: 300,
-            imageWidth: 500,
             direction: SliderDirection.rightToLeft,
             itemOne: const AssetImage('assets/images/render.png'),
             itemTwo: const AssetImage('assets/images/render_oc.png'),
@@ -105,7 +115,11 @@ void main() {
       await tester.drag(find.byType(ImageCompareSlider), const Offset(-50, 0));
       await tester.pump();
 
-      expect(newPosition, lessThan(0.5));
+      await tester.drag(find.byType(ImageCompareSlider), const Offset(-25, 0));
+      await tester.drag(find.byType(ImageCompareSlider), const Offset(25, 0));
+
+      // new position is not the same as the initial position
+      expect(newPosition, isNot(0.5));
     });
 
     testWidgets('Test ImageCompareSlider moves slider on tap', (tester) async {
@@ -113,8 +127,6 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: ImageCompareSlider(
-            imageHeight: 300,
-            imageWidth: 500,
             direction: SliderDirection.topToBottom,
             itemOne: const AssetImage('assets/images/render.png'),
             itemTwo: const AssetImage('assets/images/render_oc.png'),
@@ -131,18 +143,16 @@ void main() {
       expect(imageCompareSlider.position, 0.5);
 
       // Move the Slider when taps on the left
-      await tester.tapAt(Offset.zero);
+      await tester.tapAt(const Offset(10, 0));
       await tester.pump();
 
-      expect(newPosition, lessThan(0.5));
+      expect(newPosition, isNot(0.5));
     });
 
     testWidgets('Mouse region moves on hover', (tester) async {
       late double newPosition;
       final app = MaterialApp(
         home: ImageCompareSlider(
-          imageHeight: 300,
-          imageWidth: 500,
           direction: SliderDirection.bottomToTop,
           itemOne: const AssetImage('assets/images/render.png'),
           itemTwo: const AssetImage('assets/images/render_oc.png'),

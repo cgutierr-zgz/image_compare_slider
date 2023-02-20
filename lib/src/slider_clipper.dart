@@ -25,6 +25,5 @@ class _SliderClipper extends CustomClipper<Rect> {
   }
 
   @override
-  bool shouldReclip(_SliderClipper oldClipper) =>
-      oldClipper.position != position || oldClipper.direction != direction;
+  bool shouldReclip(_SliderClipper oldClipper) => true;
 }

@@ -1,4 +1,4 @@
-# Image Compare
+# Image Compare Slider
 
 [![ci][ci_badge]][ci_link] [![pub package][pub_badge]][pub_link] ![Coverage badge][coverage_badge] [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link] [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason) [![License: MIT][license_badge]][license_link]
 
@@ -36,8 +36,6 @@ Use it:
 ```dart
 //...
 ImageCompareSlider(
-  imageHeight: 500,
-  imageWidth: 500,
   itemOne: const AssetImage('assets/images/render.png'),
   itemTwo: const AssetImage('assets/images/render_oc.png'),
 )
