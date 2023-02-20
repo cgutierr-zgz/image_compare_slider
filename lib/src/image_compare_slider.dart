@@ -8,6 +8,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+part 'slider_clipper.dart';
+part 'handle.dart';
+
 /// Slider direction.
 enum SliderDirection {
   /// Slider direction from left to right.
@@ -187,7 +190,15 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
                     ],
                   ),
                 ),
-                buildHandle(constraints),
+                _Handle(
+                  position: position,
+                  dividerColor: widget.dividerColor,
+                  dividerWidth: widget.dividerWidth,
+                  portrait: widget.portrait,
+                  constraints: constraints,
+                  hideHandle: widget.hideHandle,
+                  handle: widget.handle,
+                ),
               ],
             ),
           );
@@ -202,95 +213,4 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
       ),
     );
   }
-
-  double getSliderSize(BoxConstraints constraints) {
-    if (widget.portrait) return constraints.maxHeight;
-
-    return constraints.maxWidth;
-  }
-
-  Widget buildHandle(BoxConstraints constraints) {
-    const handleSize = 50.0;
-    final handleOffset =
-        position * getSliderSize(constraints) - (handleSize / 2);
-
-    final line = Expanded(
-      child: Container(
-        width: widget.portrait ? null : widget.dividerWidth,
-        height: widget.portrait ? widget.dividerWidth : null,
-        color: widget.dividerColor,
-      ),
-    );
-
-    final handle = SizedBox(
-      height: widget.portrait ? handleSize : null,
-      width: widget.portrait ? null : handleSize,
-      child: widget.hideHandle
-          ? null
-          : widget.handle ??
-              Container(
-                alignment: Alignment.center,
-                width: handleSize,
-                height: handleSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: widget.dividerColor,
-                    width: widget.dividerWidth,
-                  ),
-                ),
-                child: Transform.rotate(
-                  angle: widget.portrait ? 0 : -pi / 2,
-                  child: Icon(Icons.unfold_more, color: widget.dividerColor),
-                ),
-              ),
-    );
-
-    final children = <Widget>[line, handle, line];
-
-    return Positioned(
-      top: widget.portrait ? handleOffset : 0,
-      left: widget.portrait ? 0 : handleOffset,
-      right: widget.portrait ? 0 : null,
-      bottom: widget.portrait ? null : 0,
-      child: widget.portrait
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: children,
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: children,
-            ),
-    );
-  }
-}
-
-class _SliderClipper extends CustomClipper<Rect> {
-  _SliderClipper({required this.position, required this.direction});
-
-  final double position;
-  final SliderDirection direction;
-
-  @override
-  Rect getClip(Size size) {
-    switch (direction) {
-      case SliderDirection.leftToRight:
-        final dx = position * size.width;
-        return Rect.fromLTRB(0, 0, dx, size.height);
-      case SliderDirection.rightToLeft:
-        final dx = position * size.width;
-        return Rect.fromLTRB(dx, 0, size.width, size.height);
-      case SliderDirection.topToBottom:
-        final dy = position * size.height;
-        return Rect.fromLTRB(0, 0, size.width, dy);
-      case SliderDirection.bottomToTop:
-        final dy = position * size.height;
-        return Rect.fromLTRB(0, dy, size.width, size.height);
-    }
-  }
-
-  @override
-  bool shouldReclip(_SliderClipper oldClipper) =>
-      oldClipper.position != position || oldClipper.direction != direction;
 }
