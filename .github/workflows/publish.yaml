@@ -41,12 +41,13 @@ jobs:
           EOF
           dart pub publish -f
 
-      - name: Create Release 📦
-        run: |
-          TAG_VERSION=$(cat pubspec.yaml | grep version | cut -d " " -f 2 | tr -d '"')
-          gh release create $TAG_VERSION -t $TAG_VERSION --generate-notes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # TODO(carlito): Create gh release
+      # - name: Create Release 📦
+      #   run: |
+      #     TAG_VERSION=$(cat pubspec.yaml | grep version | cut -d " " -f 2 | tr -d '"')
+      #     gh release create $TAG_VERSION -t $TAG_VERSION --generate-notes
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       # TODO(carlito): Create automated release -> https://dart.dev/tools/pub/automated-publishing
       # TODO(carlito): Add deployment to GitHub Pages

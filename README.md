@@ -2,9 +2,11 @@
 
 [![ci][ci_badge]][ci_link] [![pub package][pub_badge]][pub_link] ![Coverage badge][coverage_badge] [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link] [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason) [![License: MIT][license_badge]][license_link]
 
-Easily compare two images with a slider
+Inspired by [react-compare-slider](https://www.npmjs.com/package/react-compare-slider), this package allows you to easily compare two images with a slider.
 
-![Example](https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example.png)
+**PR's are welcome!**
+
+<img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example.png" width="300">
 
 ## Installation 💻
 
