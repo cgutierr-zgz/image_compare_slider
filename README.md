@@ -44,10 +44,10 @@ ImageCompareSlider(
 
 The widget its pretty simple and customizable, see:
 
-![Example](https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/video.mov)
+![Example](https://github.com/cgutierr-zgz/image_compare_slider/blob/main/screenshots/video.gif)
 
-[ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/workflows/publish/badge.svg
-[ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions
+[ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
+[ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml
 [pub_badge]: https://img.shields.io/pub/v/image_compare_slider.svg?label=image_compare_slider
 [pub_link]: https://pub.dev/packages/image_compare_slider
 [coverage_badge]: https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/coverage_badge.svg
