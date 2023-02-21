@@ -8,8 +8,9 @@ class _HandlePainter extends CustomPainter {
     required this.portrait,
     required this.hideHandle,
     required this.handlePosition,
-    required this.handleRadius,
     required this.fillHandle,
+    required this.handleSize,
+    required this.handleRadius,
   });
 
   final double position;
@@ -17,13 +18,14 @@ class _HandlePainter extends CustomPainter {
   final double strokeWidth;
   final bool portrait;
   final bool hideHandle;
-  final double handlePosition;
-  final double handleRadius;
   final bool fillHandle;
+  final double handlePosition;
+  final double handleSize;
+  final BorderRadius handleRadius;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final handleSize = hideHandle ? 0 : handleRadius;
+    final handle = hideHandle ? 0.0 : handleSize;
     final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
@@ -35,17 +37,17 @@ class _HandlePainter extends CustomPainter {
 
     var shouldPaint = true;
     if (portrait) {
-      shouldPaint = handlePosition * size.height > handleSize / 2;
+      shouldPaint = handlePosition * size.height > handle / 2;
     } else {
-      shouldPaint = handlePosition * size.width > handleSize / 2;
+      shouldPaint = handlePosition * size.width > handle / 2;
     }
 
     if (shouldPaint) {
       canvas.drawLine(
         portrait ? Offset(0, dy) : Offset(dx, 0),
         portrait
-            ? Offset(size.width * handlePosition - handleSize / 2, dy)
-            : Offset(dx, size.height * handlePosition - handleSize / 2),
+            ? Offset(size.width * handlePosition - handle / 2, dy)
+            : Offset(dx, size.height * handlePosition - handle / 2),
         paint,
       );
     }
@@ -63,21 +65,28 @@ class _HandlePainter extends CustomPainter {
         portrait ? position * size.height : handlePosition * size.height,
       );
 
-      if (fillHandle) canvas.drawCircle(center, handleSize / 2, circlePaint);
-      canvas.drawCircle(center, handleSize / 2, borderPaint);
+      final rect = Rect.fromCenter(
+        center: center,
+        width: handle,
+        height: handle,
+      );
+
+      if (fillHandle) canvas.drawRRect(handleRadius.toRRect(rect), circlePaint);
+
+      canvas.drawRRect(handleRadius.toRRect(rect), borderPaint);
     }
 
     if (portrait) {
-      shouldPaint = (1 - handlePosition) * size.height > handleSize / 2;
+      shouldPaint = (1 - handlePosition) * size.height > handle / 2;
     } else {
-      shouldPaint = (1 - handlePosition) * size.width > handleSize / 2;
+      shouldPaint = (1 - handlePosition) * size.width > handle / 2;
     }
 
     if (shouldPaint) {
       canvas.drawLine(
         portrait
-            ? Offset(size.width * handlePosition + handleSize / 2, dy)
-            : Offset(dx, size.height * handlePosition + handleSize / 2),
+            ? Offset(size.width * handlePosition + handle / 2, dy)
+            : Offset(dx, size.height * handlePosition + handle / 2),
         portrait ? Offset(size.width, dy) : Offset(dx, size.height),
         paint,
       );

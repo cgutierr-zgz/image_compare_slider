@@ -1,4 +1,5 @@
-import 'package:flutter/gestures.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_compare_slider/image_compare_slider.dart';
@@ -71,7 +72,7 @@ void main() {
             direction: updatedPortrait,
             hideHandle: updatedHideHandle,
             handlePosition: updatedHandlePosition,
-            handleRadius: updatedHandleRadius,
+            handleSize: updatedHandleRadius,
             fillHandle: updatedFillHandle,
           ),
         ),
@@ -87,7 +88,7 @@ void main() {
       expect(imageCompareSlider.direction, updatedPortrait);
       expect(imageCompareSlider.hideHandle, updatedHideHandle);
       expect(imageCompareSlider.handlePosition, updatedHandlePosition);
-      expect(imageCompareSlider.handleRadius, updatedHandleRadius);
+      expect(imageCompareSlider.handleSize, updatedHandleRadius);
       expect(imageCompareSlider.fillHandle, updatedFillHandle);
     });
 
@@ -175,6 +176,42 @@ void main() {
 
       // New position is not equal to the initial position
       expect(newPosition, isNot(0.5));
+    });
+    testWidgets('Test ColorFiltered and FilterImage', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ImageCompareSlider(
+            direction: SliderDirection.bottomToTop,
+            itemOne: const AssetImage('assets/images/render.png'),
+            itemTwo: const AssetImage('assets/images/render_oc.png'),
+            itemOneColor: Colors.red,
+            itemTwoColor: Colors.red,
+            itemOneBlendMode: BlendMode.srcIn,
+            itemTwoBlendMode: BlendMode.srcIn,
+            itemOneColorFilter: const ColorFilter.mode(
+              Colors.red,
+              BlendMode.srcIn,
+            ),
+            itemOneImageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            itemTwoColorFilter: const ColorFilter.mode(
+              Colors.red,
+              BlendMode.srcIn,
+            ),
+            itemTwoImageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          ),
+        ),
+      );
+
+      final imageCompareSlider =
+          tester.widget<ImageCompareSlider>(find.byType(ImageCompareSlider));
+
+      expect(imageCompareSlider.itemOneColorFilter, isNotNull);
+
+      expect(imageCompareSlider.itemOneImageFilter, isNotNull);
+
+      expect(imageCompareSlider.itemTwoColorFilter, isNotNull);
+
+      expect(imageCompareSlider.itemTwoImageFilter, isNotNull);
     });
   });
 }

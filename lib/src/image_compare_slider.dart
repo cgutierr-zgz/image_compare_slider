@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
 part 'slider_clipper.dart';
@@ -39,8 +41,17 @@ class ImageCompareSlider extends StatefulWidget {
     required this.itemOne,
     required this.itemTwo,
     super.key,
+    this.itemOneImageFilter,
+    this.itemTwoImageFilter,
+    this.itemOneColorFilter,
+    this.itemTwoColorFilter,
+    this.itemOneColor,
+    this.itemOneBlendMode,
+    this.itemTwoColor,
+    this.itemTwoBlendMode,
     this.changePositionOnHover = false,
-    this.handleRadius = 20,
+    this.handleSize = 20,
+    this.handleRadius = const BorderRadius.all(Radius.circular(10)),
     this.fillHandle = false,
     this.hideHandle = false,
     this.handlePosition = 0.5,
@@ -60,19 +71,18 @@ class ImageCompareSlider extends StatefulWidget {
           'handlePosition must be between 0 and 1',
         ),
         assert(
-          dividerWidth >= 0,
-          'dividerWidth must be greater than 0',
-        ),
-        assert(
-          handleRadius >= 0,
-          'handleRadius must be greater or equal to 0',
+          handleSize >= 0,
+          'handleSize must be greater or equal to 0',
         );
 
   /// Whether the slider should follow the pointer on hover.
   final bool changePositionOnHover;
 
   /// Handle size.
-  final double handleRadius;
+  final double handleSize;
+
+  /// Handle radius.
+  final BorderRadius handleRadius;
 
   /// Wether to fill the handle.
   final bool fillHandle;
@@ -86,8 +96,32 @@ class ImageCompareSlider extends StatefulWidget {
   /// First component to show in slider.
   final ImageProvider<Object> itemOne;
 
+  /// Filter to apply to the first component.
+  final ui.ImageFilter? itemOneImageFilter;
+
+  /// Color filter to apply to the first component.
+  final ColorFilter? itemOneColorFilter;
+
+  /// First component image color
+  final Color? itemOneColor;
+
+  /// First component image color blend mode
+  final BlendMode? itemOneBlendMode;
+
   /// Second component to show in slider.
   final ImageProvider<Object> itemTwo;
+
+  /// Color filter to apply to the second component.
+  final ColorFilter? itemTwoColorFilter;
+
+  /// Filter to apply to the second component.
+  final ui.ImageFilter? itemTwoImageFilter;
+
+  /// First component image color
+  final Color? itemTwoColor;
+
+  /// First component image color blend mode
+  final BlendMode? itemTwoBlendMode;
 
   /// Callback on position change, returns current position.
   final void Function(double position)? onPositionChange;
@@ -146,16 +180,54 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final firstImage = Image(
+      image: widget.itemOne,
+      fit: BoxFit.cover,
+      color: widget.itemOneColor,
+      colorBlendMode: widget.itemOneBlendMode,
+    );
+    final secondImage = Image(
+      image: widget.itemTwo,
+      fit: BoxFit.cover,
+      color: widget.itemTwoColor,
+      colorBlendMode: widget.itemTwoBlendMode,
+    );
+    final firstFilter = widget.itemOneImageFilter != null
+        ? ImageFiltered(
+            imageFilter: widget.itemOneImageFilter!,
+            child: firstImage,
+          )
+        : firstImage;
+    final secondFilter = widget.itemTwoImageFilter != null
+        ? ImageFiltered(
+            imageFilter: widget.itemTwoImageFilter!,
+            child: secondImage,
+          )
+        : secondImage;
+    final itemOne = widget.itemOneColorFilter != null
+        ? ColorFiltered(
+            colorFilter: widget.itemOneColorFilter!,
+            child: firstFilter,
+          )
+        : firstFilter;
+
+    final itemTwo = widget.itemTwoColorFilter != null
+        ? ColorFiltered(
+            colorFilter: widget.itemTwoColorFilter!,
+            child: secondFilter,
+          )
+        : secondFilter;
+
     final child = Stack(
       fit: StackFit.passthrough,
       children: [
-        Image(image: widget.itemOne, fit: BoxFit.cover),
+        itemOne,
         ClipRect(
           clipper: _SliderClipper(
             position: position,
             direction: widget.direction,
           ),
-          child: Image(image: widget.itemTwo, fit: BoxFit.cover),
+          child: itemTwo,
         ),
         GestureDetector(
           onTapDown: (details) => onDetection(details.globalPosition),
@@ -168,9 +240,10 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
               strokeWidth: widget.dividerWidth,
               portrait: widget.portrait,
               fillHandle: widget.fillHandle,
-              handleRadius: widget.handleRadius,
+              handleSize: widget.handleSize,
               hideHandle: widget.hideHandle,
               handlePosition: widget.handlePosition,
+              handleRadius: widget.handleRadius,
             ),
             child: Opacity(
               opacity: 0,

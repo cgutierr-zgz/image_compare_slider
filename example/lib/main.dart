@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_compare_slider/image_compare_slider.dart';
@@ -38,6 +40,14 @@ class _AppState extends State<_App> {
   double handlePosition = 0.5;
   double handleSize = 20;
   bool fillHandle = false;
+  ImageFilter? itemOneImageFilter;
+  ImageFilter? itemTwoImageFilter;
+  ColorFilter? itemOneColorFilter;
+  ColorFilter? itemTwoColorFilter;
+  double handleRadius = 10;
+  Color? itemOneColor;
+  BlendMode? itemOneBlendMode;
+  Color? itemTwoColor;
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +105,11 @@ class _AppState extends State<_App> {
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: ImageCompareSlider(
-                    //itemOne: Image.asset('assets/images/render.png'),
-                    itemTwo: const NetworkImage(
-                      'https://cdnb.artstation.com/p/assets/images/images/045/075/993/large/miriam-raya-garcia-render1.jpg?1641862646',
-                    ),
+                    itemTwo: const AssetImage('assets/images/render-big.jpeg'),
+                    //itemTwo: const AssetImage('assets/images/render.png'),
+                    //itemTwo: const NetworkImage(
+                    //  'https://cdnb.artstation.com/p/assets/images/images/045/075/993/large/miriam-raya-garcia-render1.jpg?1641862646',
+                    //),
                     itemOne: const AssetImage(
                       'assets/images/render_oc.png',
                     ),
@@ -114,7 +125,17 @@ class _AppState extends State<_App> {
                     hideHandle: hideHandle,
                     handlePosition: handlePosition,
                     fillHandle: fillHandle,
-                    handleRadius: handleSize,
+                    handleSize: handleSize,
+                    itemOneImageFilter: itemOneImageFilter,
+                    itemTwoImageFilter: itemTwoImageFilter,
+                    itemOneColorFilter: itemOneColorFilter,
+                    itemTwoColorFilter: itemTwoColorFilter,
+                    handleRadius:
+                        BorderRadius.all(Radius.circular(handleRadius)),
+                    itemOneColor: itemOneColor,
+                    itemTwoColor: itemTwoColor,
+                    itemOneBlendMode: itemOneBlendMode,
+                    itemTwoBlendMode: itemOneBlendMode,
                   ),
                 ),
               ),
@@ -174,6 +195,52 @@ class _AppState extends State<_App> {
                           ),
                         ],
                       ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Filter/Color 1',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          CupertinoSwitch(
+                            value: itemOneImageFilter != null,
+                            onChanged: (value) => setState(() =>
+                                itemOneImageFilter = value
+                                    ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
+                                    : null),
+                          ),
+                          CupertinoSwitch(
+                            value: itemOneColorFilter != null,
+                            onChanged: (value) => setState(() =>
+                                itemOneColorFilter = value
+                                    ? const ColorFilter.mode(
+                                        Colors.red, BlendMode.colorBurn)
+                                    : null),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Filter/Color 2',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          CupertinoSwitch(
+                            value: itemTwoImageFilter != null,
+                            onChanged: (value) => setState(() =>
+                                itemTwoImageFilter = value
+                                    ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
+                                    : null),
+                          ),
+                          CupertinoSwitch(
+                            value: itemTwoColorFilter != null,
+                            onChanged: (value) => setState(() =>
+                                itemTwoColorFilter = value
+                                    ? const ColorFilter.mode(
+                                        Colors.blue, BlendMode.colorBurn)
+                                    : null),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   Column(
@@ -211,10 +278,22 @@ class _AppState extends State<_App> {
                         onChanged: (value) =>
                             setState(() => handlePosition = value),
                       ),
+                      Text(
+                        'Handle radius: ${handleRadius.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Slider(
+                        value: handleRadius,
+                        min: 0,
+                        max: 50,
+                        onChanged: (value) =>
+                            setState(() => handleRadius = value),
+                      ),
                     ],
                   )
                 ],
               ),
+              const SizedBox(height: 20),
               Text(
                 'Slider direction: ${direction.toString().split('.').last}',
                 style: const TextStyle(color: Colors.white),
@@ -263,8 +342,13 @@ class _AppState extends State<_App> {
                   children: List.generate(
                     Colors.primaries.length,
                     (index) => IconButton(
-                      onPressed: () => setState(
-                          () => dividerColor = Colors.primaries[index]),
+                      onPressed: () {
+                        if (dividerColor == Colors.primaries[index]) {
+                          setState(() => dividerColor = Colors.white);
+                          return;
+                        }
+                        setState(() => dividerColor = Colors.primaries[index]);
+                      },
                       icon: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
@@ -285,7 +369,121 @@ class _AppState extends State<_App> {
                     ),
                   ),
                 ),
-              )
+              ),
+              Row(
+                children: const [
+                  Text('Item 1 Color', style: TextStyle(color: Colors.white)),
+                  Spacer(),
+                  Text('Item 2 Color', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: List.generate(
+                        Colors.primaries.length,
+                        (index) => IconButton(
+                          onPressed: () {
+                            if (itemOneColor == Colors.primaries[index]) {
+                              setState(() => itemOneColor = null);
+                              return;
+                            }
+                            setState(
+                                () => itemOneColor = Colors.primaries[index]);
+                          },
+                          icon: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                if (itemOneColor == Colors.primaries[index])
+                                  const BoxShadow(
+                                    color: Colors.blueAccent,
+                                    blurRadius: 5,
+                                  )
+                              ],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.circle,
+                              color: Colors.primaries[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: List.generate(
+                        Colors.primaries.length,
+                        (index) => IconButton(
+                          onPressed: () {
+                            if (itemTwoColor == Colors.primaries[index]) {
+                              setState(() => itemTwoColor = null);
+                              return;
+                            }
+                            setState(
+                                () => itemTwoColor = Colors.primaries[index]);
+                          },
+                          icon: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                if (itemTwoColor == Colors.primaries[index])
+                                  const BoxShadow(
+                                    color: Colors.blueAccent,
+                                    blurRadius: 5,
+                                  )
+                              ],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.circle,
+                              color: Colors.primaries[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Text('Blend Mode', style: TextStyle(color: Colors.white)),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    children: List.generate(
+                      BlendMode.values.length,
+                      (index) => TextButton(
+                        onPressed: () {
+                          if (BlendMode.values[index] == itemOneBlendMode) {
+                            setState(() {
+                              itemOneBlendMode = null;
+                            });
+                            return;
+                          }
+                          setState(() {
+                            itemOneBlendMode = BlendMode.values[index];
+                          });
+                        },
+                        child: Text(
+                          BlendMode.values[index].toString().split('.').last,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: itemOneBlendMode == BlendMode.values[index]
+                                ? Colors.blueAccent
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

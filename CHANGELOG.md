@@ -1,3 +1,9 @@
+# 2.1.0
+
+- feat: renames handleRadius to handleSize and adds handleRadius to customize the radius of the handle
+
+- feat adds ImageFilter, ColorFilter, Color and BlendMode to both images
+
 # 2.0.1
 
 - fix: changes Stack fit to passthrough
