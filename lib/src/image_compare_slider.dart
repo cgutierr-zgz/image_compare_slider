@@ -147,6 +147,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
   @override
   Widget build(BuildContext context) {
     final child = Stack(
+      fit: StackFit.passthrough,
       children: [
         Image(image: widget.itemOne, fit: BoxFit.cover),
         ClipRect(

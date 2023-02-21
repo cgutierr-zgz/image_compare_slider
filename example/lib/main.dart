@@ -118,12 +118,24 @@ class _AppState extends State<_App> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
+              Text(
+                'Position: ${position.toStringAsFixed(2)}',
+                style: const TextStyle(color: Colors.white),
+              ),
+              Slider(
+                value: position,
+                min: 0,
+                max: 1,
+                onChanged: (value) => setState(() => position = value),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Column(
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
                             'Hide handle',
@@ -166,17 +178,6 @@ class _AppState extends State<_App> {
                   ),
                   Column(
                     children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        'Position: ${position.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      Slider(
-                        value: position,
-                        min: 0,
-                        max: 1,
-                        onChanged: (value) => setState(() => position = value),
-                      ),
                       Text(
                         'Divider width: ${dividerWidth.toStringAsFixed(2)}',
                         style: const TextStyle(color: Colors.white),
@@ -243,7 +244,9 @@ class _AppState extends State<_App> {
                       children: [
                         Icon(
                           icon,
-                          color: Colors.white,
+                          color: direction == SliderDirection.values[index]
+                              ? Colors.blueAccent
+                              : Colors.white,
                         ),
                       ],
                     ),
@@ -262,13 +265,22 @@ class _AppState extends State<_App> {
                     (index) => IconButton(
                       onPressed: () => setState(
                           () => dividerColor = Colors.primaries[index]),
-                      icon: Column(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            color: Colors.primaries[index],
-                          ),
-                        ],
+                      icon: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            if (dividerColor == Colors.primaries[index])
+                              const BoxShadow(
+                                color: Colors.blueAccent,
+                                blurRadius: 5,
+                              )
+                          ],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.circle,
+                          color: Colors.primaries[index],
+                        ),
                       ),
                     ),
                   ),

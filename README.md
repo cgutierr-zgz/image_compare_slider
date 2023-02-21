@@ -42,7 +42,9 @@ ImageCompareSlider(
 //...
 ```
 
+
 The widget its pretty simple and customizable, see:
+_If you want it to style it with a custom border/padding, just wrap it with a `Container` and set the desired properties._
 
 ![Example](https://github.com/cgutierr-zgz/image_compare_slider/blob/main/screenshots/video.gif)
 

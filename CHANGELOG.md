@@ -1,3 +1,7 @@
+# 2.0.1
+
+- fix: changes Stack fit to passthrough
+
 # 2.0.0+1
 
 - fix: updates to the pipeline

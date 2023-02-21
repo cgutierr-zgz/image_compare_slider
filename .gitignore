@@ -5,5 +5,5 @@
 .packages
 build/
 pubspec.lock
-
+coverage/
 .DS_Store
