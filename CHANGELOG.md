@@ -1,3 +1,9 @@
+# 2.2.0
+
+- feat: imageFilter/ColorFilter was replacer by itemWrapper to allow the customization of both items directly to the user
+
+- feat: improves the documentation and adds a new example
+
 # 2.1.0
 
 - feat: renames handleRadius to handleSize and adds handleRadius to customize the radius of the handle

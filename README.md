@@ -36,17 +36,64 @@ Use it:
 ```dart
 //...
 ImageCompareSlider(
-  itemOne: const AssetImage('assets/images/render.png'),
-  itemTwo: const AssetImage('assets/images/render_oc.png'),
+  itemOne: const AssetImage('...'),
+  itemTwo: const NetworkImage('...'),
 )
 //...
 ```
 
 
 The widget its pretty simple and customizable, see:
-_If you want it to style it with a custom border/padding, just wrap it with a `Container` and set the desired properties._
 
 ![Example](https://github.com/cgutierr-zgz/image_compare_slider/blob/main/screenshots/video.gif)
+
+## Customization 🎨
+
+You can customize the widget with the following parameters:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `itemOne` | `ImageProvider` | The first image to compare |
+| `itemTwo` | `ImageProvider` | The second image to compare |
+| `changePositionOnHover` | `bool` | If the slider should change position when the mouse is over it |
+| `handleSize` | `double` | The size of the handle |
+| `handleRadius` | `BorderRadius` | The radius of the handle |
+| `fillHandle` | `bool` | If the handle should be filled |
+| `hideHandle` | `bool` | If the handle should be hidden |
+| `handlePosition` | `double` | The position of the handle relative to the slider |
+| `onPositionChange` | `void Function(double position)?` | The callback to be called when the position changes |
+| `direction` | `SliderDirection` | The direction of the slider will clip the image |
+| `dividerColor` | `Color` | The color of the divider |
+| `dividerWidth` | `double` | The width of the divider |
+| `itemOneWrapper` | `Widget Function(Widget child)?` | The wrapper for the first image |
+| `itemTwoWrapper` | `Widget Function(Widget child)?` | The wrapper for the second image |
+| `itemOneColor` | `Color?` | Color applied to the first image |
+| `itemTwoColor` | `Color?` | Color applied to the second image |
+| `itemOneBlendMode` | `BlendMode?` | Blend mode applied to the first image's color |
+| `itemTwoBlendMode` | `BlendMode?` | Blend mode applied to the second image's color |
+
+
+If you want to add some effects you can use the `itemOneWrapper` and `itemTwoWrapper` parameters to wrap the images with a `ColorFilter` or `ImageFilter`, or any other widget you want.
+
+For example, to add a `ImageFilter` with a blur effect:
+
+```dart
+// ...
+ImageCompareSlider(
+  itemOne: const AssetImage('...'),
+  itemTwo: const AssetImage('...'),
+  itemOneWrapper: (child) => ImageFiltered(
+  imageFilter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
+    child: child,
+  ),
+)
+// ...
+```
+
+Will result in:
+
+<img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example2.png" width="300">
+
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
 [ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml

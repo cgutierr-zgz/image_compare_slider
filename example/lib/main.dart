@@ -40,14 +40,13 @@ class _AppState extends State<_App> {
   double handlePosition = 0.5;
   double handleSize = 20;
   bool fillHandle = false;
-  ImageFilter? itemOneImageFilter;
-  ImageFilter? itemTwoImageFilter;
-  ColorFilter? itemOneColorFilter;
-  ColorFilter? itemTwoColorFilter;
   double handleRadius = 10;
   Color? itemOneColor;
-  BlendMode? itemOneBlendMode;
   Color? itemTwoColor;
+  BlendMode itemOneBlendMode = BlendMode.overlay;
+  BlendMode itemTwoBlendMode = BlendMode.darken;
+  Widget Function(Widget)? itemOneWrapper;
+  Widget Function(Widget)? itemTwoWrapper;
 
   @override
   Widget build(BuildContext context) {
@@ -105,385 +104,276 @@ class _AppState extends State<_App> {
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: ImageCompareSlider(
+                    itemOne: const AssetImage('assets/images/render_oc.png'),
                     itemTwo: const AssetImage('assets/images/render-big.jpeg'),
-                    //itemTwo: const AssetImage('assets/images/render.png'),
-                    //itemTwo: const NetworkImage(
-                    //  'https://cdnb.artstation.com/p/assets/images/images/045/075/993/large/miriam-raya-garcia-render1.jpg?1641862646',
-                    //),
-                    itemOne: const AssetImage(
-                      'assets/images/render_oc.png',
-                    ),
+
                     /* Optional */
                     changePositionOnHover: reactOnHover,
                     direction: direction,
                     dividerColor: dividerColor,
                     dividerWidth: dividerWidth,
                     position: position,
-                    onPositionChange: (position) {
-                      setState(() => this.position = position);
-                    },
+                    onPositionChange: (p) => setState(() => position = p),
                     hideHandle: hideHandle,
                     handlePosition: handlePosition,
                     fillHandle: fillHandle,
                     handleSize: handleSize,
-                    itemOneImageFilter: itemOneImageFilter,
-                    itemTwoImageFilter: itemTwoImageFilter,
-                    itemOneColorFilter: itemOneColorFilter,
-                    itemTwoColorFilter: itemTwoColorFilter,
                     handleRadius:
                         BorderRadius.all(Radius.circular(handleRadius)),
                     itemOneColor: itemOneColor,
-                    itemTwoColor: itemTwoColor,
                     itemOneBlendMode: itemOneBlendMode,
-                    itemTwoBlendMode: itemOneBlendMode,
+                    itemTwoColor: itemTwoColor,
+                    itemTwoBlendMode: itemTwoBlendMode,
+                    itemOneWrapper: (child) =>
+                        itemOneWrapper?.call(child) ?? child,
+                    itemTwoWrapper: (child) =>
+                        itemTwoWrapper?.call(child) ?? child,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Position: ${position.toStringAsFixed(2)}',
-                style: const TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+              slider('Position: ${position.toStringAsFixed(2)}', position, (v) {
+                setState(() => position = v);
+              }),
+              Center(
+                child: switcher('React on hover', reactOnHover, (v) {
+                  setState(() => reactOnHover = v);
+                }),
               ),
-              Slider(
-                value: position,
-                min: 0,
-                max: 1,
-                onChanged: (value) => setState(() => position = value),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              _DividerWithText(
+                text: 'Divider',
                 children: [
-                  Column(
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
+                      Column(
                         children: [
-                          const Text(
-                            'Hide handle',
-                            style: TextStyle(color: Colors.white),
+                          slider('Width: ${dividerWidth.toStringAsFixed(2)}',
+                              dividerWidth, (v) {
+                            setState(() => dividerWidth = v);
+                          }, max: 25, min: 0),
+                          slider(
+                            'R',
+                            dividerColor.red.toDouble(),
+                            (v) => setState(() =>
+                                dividerColor = dividerColor.withRed(v.toInt())),
+                            max: 255,
+                            min: 0,
                           ),
-                          CupertinoSwitch(
-                            value: hideHandle,
-                            onChanged: (value) =>
-                                setState(() => hideHandle = value),
+                          slider(
+                            'G',
+                            dividerColor.green.toDouble(),
+                            (v) => setState(() => dividerColor =
+                                dividerColor.withGreen(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'B',
+                            dividerColor.blue.toDouble(),
+                            (v) => setState(() => dividerColor =
+                                dividerColor.withBlue(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'A',
+                            dividerColor.opacity,
+                            (v) => setState(() =>
+                                dividerColor = dividerColor.withOpacity(v)),
+                            max: 1,
+                            min: 0,
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Change position on hover',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          CupertinoSwitch(
-                            value: reactOnHover,
-                            onChanged: (value) =>
-                                setState(() => reactOnHover = value),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Fill handle',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          CupertinoSwitch(
-                            value: fillHandle,
-                            onChanged: (value) =>
-                                setState(() => fillHandle = value),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Filter/Color 1',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          CupertinoSwitch(
-                            value: itemOneImageFilter != null,
-                            onChanged: (value) => setState(() =>
-                                itemOneImageFilter = value
-                                    ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
-                                    : null),
-                          ),
-                          CupertinoSwitch(
-                            value: itemOneColorFilter != null,
-                            onChanged: (value) => setState(() =>
-                                itemOneColorFilter = value
-                                    ? const ColorFilter.mode(
-                                        Colors.red, BlendMode.colorBurn)
-                                    : null),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Filter/Color 2',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          CupertinoSwitch(
-                            value: itemTwoImageFilter != null,
-                            onChanged: (value) => setState(() =>
-                                itemTwoImageFilter = value
-                                    ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
-                                    : null),
-                          ),
-                          CupertinoSwitch(
-                            value: itemTwoColorFilter != null,
-                            onChanged: (value) => setState(() =>
-                                itemTwoColorFilter = value
-                                    ? const ColorFilter.mode(
-                                        Colors.blue, BlendMode.colorBurn)
-                                    : null),
-                          ),
-                        ],
-                      ),
+                      const Spacer(),
+                      directionArrow(),
+                      const Spacer(),
                     ],
                   ),
-                  Column(
+                ],
+              ),
+              _DividerWithText(
+                text: 'Handle',
+                children: [
+                  switcher('Hide handle', hideHandle, (v) {
+                    setState(() => hideHandle = v);
+                  }),
+                  switcher('Fill handle', fillHandle, (v) {
+                    setState(() => fillHandle = v);
+                  }),
+                  slider('Position: ${handlePosition.toStringAsFixed(2)}',
+                      handlePosition, (v) {
+                    setState(() => handlePosition = v);
+                  }),
+                  slider('Radius: ${handleRadius.toStringAsFixed(2)}',
+                      handleRadius, (v) {
+                    setState(() => handleRadius = v);
+                  }, max: 50, min: 0),
+                  slider('Size: ${handleSize.toStringAsFixed(2)}', handleSize,
+                      (v) {
+                    setState(() => handleSize = v);
+                  }, max: 100, min: 0),
+                ],
+              ),
+              _DividerWithText(
+                text: 'Items',
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
-                        'Divider width: ${dividerWidth.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.white),
+                      Column(
+                        children: [
+                          slider(
+                            'R',
+                            itemOneColor?.red.toDouble() ?? 0,
+                            (v) => setState(() => itemOneColor =
+                                itemOneColor?.withRed(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'G',
+                            itemOneColor?.green.toDouble() ?? 0,
+                            (v) => setState(() => itemOneColor =
+                                itemOneColor?.withGreen(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'B',
+                            itemOneColor?.blue.toDouble() ?? 0,
+                            (v) => setState(() => itemOneColor =
+                                itemOneColor?.withBlue(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'A',
+                            itemOneColor?.opacity.toDouble() ?? 0,
+                            (v) => setState(() => itemOneColor =
+                                itemOneColor?.withOpacity(v) ?? Colors.white),
+                            max: 1,
+                            min: 0,
+                          ),
+                          PopupMenuButton<BlendMode>(
+                            color: Colors.grey.shade800,
+                            child: Row(
+                              children: [
+                                text('Blend mode: '),
+                                text(itemOneBlendMode
+                                    .toString()
+                                    .split('.')
+                                    .last),
+                              ],
+                            ),
+                            onSelected: (v) =>
+                                setState(() => itemOneBlendMode = v),
+                            itemBuilder: (context) => BlendMode.values
+                                .map(
+                                  (e) => PopupMenuItem(
+                                    value: e,
+                                    child: text(e.toString().split('.')[1]),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                          const SizedBox(height: 10),
+                          switcher('Add Blur', itemOneWrapper != null, (v) {
+                            setState(
+                              () => itemOneWrapper = v
+                                  ? (child) => ImageFiltered(
+                                        imageFilter: ImageFilter.blur(
+                                            sigmaX: 2, sigmaY: 5),
+                                        child: child,
+                                      )
+                                  : null,
+                            );
+                          }),
+                        ],
                       ),
-                      Slider(
-                        value: dividerWidth,
-                        min: 0,
-                        max: 50,
-                        onChanged: (value) =>
-                            setState(() => dividerWidth = value),
-                      ),
-                      Text(
-                        'Handle size: ${handleSize.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      Slider(
-                        value: handleSize,
-                        min: 0,
-                        max: 50,
-                        onChanged: (value) =>
-                            setState(() => handleSize = value),
-                      ),
-                      Text(
-                        'Handle position: ${handlePosition.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      Slider(
-                        value: handlePosition,
-                        min: 0,
-                        max: 1,
-                        onChanged: (value) =>
-                            setState(() => handlePosition = value),
-                      ),
-                      Text(
-                        'Handle radius: ${handleRadius.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      Slider(
-                        value: handleRadius,
-                        min: 0,
-                        max: 50,
-                        onChanged: (value) =>
-                            setState(() => handleRadius = value),
-                      ),
+                      Column(
+                        children: [
+                          slider(
+                            'R',
+                            itemTwoColor?.red.toDouble() ?? 0,
+                            (v) => setState(() => itemTwoColor =
+                                itemTwoColor?.withRed(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'G',
+                            itemTwoColor?.green.toDouble() ?? 0,
+                            (v) => setState(() => itemTwoColor =
+                                itemTwoColor?.withGreen(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'B',
+                            itemTwoColor?.blue.toDouble() ?? 0,
+                            (v) => setState(() => itemTwoColor =
+                                itemTwoColor?.withBlue(v.toInt()) ??
+                                    Colors.white),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'A',
+                            itemTwoColor?.opacity.toDouble() ?? 0,
+                            (v) => setState(() => itemTwoColor =
+                                itemTwoColor?.withOpacity(v) ?? Colors.white),
+                            max: 1,
+                            min: 0,
+                          ),
+                          PopupMenuButton<BlendMode>(
+                            color: Colors.grey.shade800,
+                            child: Row(
+                              children: [
+                                text('Blend mode: '),
+                                text(itemTwoBlendMode
+                                    .toString()
+                                    .split('.')
+                                    .last),
+                              ],
+                            ),
+                            onSelected: (v) =>
+                                setState(() => itemTwoBlendMode = v),
+                            itemBuilder: (context) => BlendMode.values
+                                .map(
+                                  (e) => PopupMenuItem(
+                                    value: e,
+                                    child: text(e.toString().split('.')[1]),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                          const SizedBox(height: 10),
+                          switcher('Add Color Filter', itemTwoWrapper != null,
+                              (v) {
+                            setState(
+                              () => itemTwoWrapper = v
+                                  ? (child) => ColorFiltered(
+                                        colorFilter: const ColorFilter.mode(
+                                            Colors.red, BlendMode.color),
+                                        child: child,
+                                      )
+                                  : null,
+                            );
+                          }),
+                        ],
+                      )
                     ],
                   )
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Slider direction: ${direction.toString().split('.').last}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(SliderDirection.values.length, (index) {
-                  late IconData icon;
-                  switch (SliderDirection.values[index]) {
-                    case SliderDirection.leftToRight:
-                      icon = Icons.arrow_forward_ios;
-                      break;
-                    case SliderDirection.rightToLeft:
-                      icon = Icons.arrow_back_ios;
-                      break;
-                    case SliderDirection.topToBottom:
-                      icon = Icons.arrow_downward;
-                      break;
-                    case SliderDirection.bottomToTop:
-                      icon = Icons.arrow_upward;
-                      break;
-                  }
-                  return IconButton(
-                    onPressed: () => setState(
-                        () => direction = SliderDirection.values[index]),
-                    icon: Column(
-                      children: [
-                        Icon(
-                          icon,
-                          color: direction == SliderDirection.values[index]
-                              ? Colors.blueAccent
-                              : Colors.white,
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
-              const Text(
-                'Divider Color',
-                style: TextStyle(color: Colors.white),
-              ),
-              Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: List.generate(
-                    Colors.primaries.length,
-                    (index) => IconButton(
-                      onPressed: () {
-                        if (dividerColor == Colors.primaries[index]) {
-                          setState(() => dividerColor = Colors.white);
-                          return;
-                        }
-                        setState(() => dividerColor = Colors.primaries[index]);
-                      },
-                      icon: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            if (dividerColor == Colors.primaries[index])
-                              const BoxShadow(
-                                color: Colors.blueAccent,
-                                blurRadius: 5,
-                              )
-                          ],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.primaries[index],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                children: const [
-                  Text('Item 1 Color', style: TextStyle(color: Colors.white)),
-                  Spacer(),
-                  Text('Item 2 Color', style: TextStyle(color: Colors.white)),
-                ],
-              ),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      children: List.generate(
-                        Colors.primaries.length,
-                        (index) => IconButton(
-                          onPressed: () {
-                            if (itemOneColor == Colors.primaries[index]) {
-                              setState(() => itemOneColor = null);
-                              return;
-                            }
-                            setState(
-                                () => itemOneColor = Colors.primaries[index]);
-                          },
-                          icon: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                if (itemOneColor == Colors.primaries[index])
-                                  const BoxShadow(
-                                    color: Colors.blueAccent,
-                                    blurRadius: 5,
-                                  )
-                              ],
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.circle,
-                              color: Colors.primaries[index],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      children: List.generate(
-                        Colors.primaries.length,
-                        (index) => IconButton(
-                          onPressed: () {
-                            if (itemTwoColor == Colors.primaries[index]) {
-                              setState(() => itemTwoColor = null);
-                              return;
-                            }
-                            setState(
-                                () => itemTwoColor = Colors.primaries[index]);
-                          },
-                          icon: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                if (itemTwoColor == Colors.primaries[index])
-                                  const BoxShadow(
-                                    color: Colors.blueAccent,
-                                    blurRadius: 5,
-                                  )
-                              ],
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.circle,
-                              color: Colors.primaries[index],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Text('Blend Mode', style: TextStyle(color: Colors.white)),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    children: List.generate(
-                      BlendMode.values.length,
-                      (index) => TextButton(
-                        onPressed: () {
-                          if (BlendMode.values[index] == itemOneBlendMode) {
-                            setState(() {
-                              itemOneBlendMode = null;
-                            });
-                            return;
-                          }
-                          setState(() {
-                            itemOneBlendMode = BlendMode.values[index];
-                          });
-                        },
-                        child: Text(
-                          BlendMode.values[index].toString().split('.').last,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: itemOneBlendMode == BlendMode.values[index]
-                                ? Colors.blueAccent
-                                : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 100)
             ],
           ),
         ),
@@ -499,6 +389,129 @@ class _AppState extends State<_App> {
           ),
         ),
       ),*/
+    );
+  }
+
+  Widget slider(String title, double value, Function(double) onChanged,
+      {double max = 1, double min = 0}) {
+    return Row(
+      children: [
+        text(title),
+        const SizedBox(width: 5),
+        SizedBox(
+          //width: 100,
+          child: CupertinoSlider(
+            value: value,
+            max: max,
+            min: min,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget switcher(String title, bool value, Function(bool) onChanged) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        text(title),
+        const SizedBox(width: 10),
+        SizedBox(
+          child: CupertinoSwitch(
+            value: value,
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget text(String text) {
+    return Text(text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ));
+  }
+
+  Widget directionArrow() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(
+        SliderDirection.values.length,
+        (index) {
+          final dir = SliderDirection.values[index];
+          late IconData icon;
+
+          switch (dir) {
+            case SliderDirection.leftToRight:
+              icon = Icons.arrow_forward;
+              break;
+            case SliderDirection.rightToLeft:
+              icon = Icons.arrow_back;
+              break;
+            case SliderDirection.topToBottom:
+              icon = Icons.arrow_downward;
+              break;
+            case SliderDirection.bottomToTop:
+              icon = Icons.arrow_upward;
+              break;
+          }
+          return IconButton(
+            icon: Icon(
+              icon,
+              color: dir == direction ? Colors.blueAccent : Colors.white,
+            ),
+            onPressed: () => setState(() => direction = dir),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _DividerWithText extends StatefulWidget {
+  const _DividerWithText({
+    required this.text,
+    required this.children,
+  });
+
+  final String text;
+  final List<Widget> children;
+
+  @override
+  State<_DividerWithText> createState() => _DividerWithTextState();
+}
+
+class _DividerWithTextState extends State<_DividerWithText> {
+  bool show = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CupertinoButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () => setState(() => show = !show),
+          child: Row(children: [
+            const Expanded(child: Divider(color: Colors.white)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                widget.text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const Expanded(child: Divider(color: Colors.white)),
+          ]),
+        ),
+        if (show) ...widget.children,
+      ],
     );
   }
 }

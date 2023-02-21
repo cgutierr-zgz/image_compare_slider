@@ -177,7 +177,7 @@ void main() {
       // New position is not equal to the initial position
       expect(newPosition, isNot(0.5));
     });
-    testWidgets('Test ColorFiltered and FilterImage', (tester) async {
+    testWidgets('Test Wrapper and color/blend mode', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: ImageCompareSlider(
@@ -188,16 +188,14 @@ void main() {
             itemTwoColor: Colors.red,
             itemOneBlendMode: BlendMode.srcIn,
             itemTwoBlendMode: BlendMode.srcIn,
-            itemOneColorFilter: const ColorFilter.mode(
-              Colors.red,
-              BlendMode.srcIn,
+            itemOneWrapper: (child) => ColoredBox(
+              color: Colors.blue,
+              child: child,
             ),
-            itemOneImageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            itemTwoColorFilter: const ColorFilter.mode(
-              Colors.red,
-              BlendMode.srcIn,
+            itemTwoWrapper: (child) => ColoredBox(
+              color: Colors.blue,
+              child: child,
             ),
-            itemTwoImageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           ),
         ),
       );
@@ -205,13 +203,10 @@ void main() {
       final imageCompareSlider =
           tester.widget<ImageCompareSlider>(find.byType(ImageCompareSlider));
 
-      expect(imageCompareSlider.itemOneColorFilter, isNotNull);
-
-      expect(imageCompareSlider.itemOneImageFilter, isNotNull);
-
-      expect(imageCompareSlider.itemTwoColorFilter, isNotNull);
-
-      expect(imageCompareSlider.itemTwoImageFilter, isNotNull);
+      expect(imageCompareSlider.itemOneColor, Colors.red);
+      expect(imageCompareSlider.itemTwoColor, Colors.red);
+      expect(imageCompareSlider.itemOneBlendMode, BlendMode.srcIn);
+      expect(imageCompareSlider.itemTwoBlendMode, BlendMode.srcIn);
     });
   });
 }
