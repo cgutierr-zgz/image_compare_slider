@@ -104,8 +104,16 @@ class _AppState extends State<_App> {
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: ImageCompareSlider(
-                    itemOne: const AssetImage('assets/images/render_oc.png'),
-                    itemTwo: const AssetImage('assets/images/render-big.jpeg'),
+                    itemOne: Image.asset(
+                      'assets/images/render_oc.png',
+                      colorBlendMode: itemOneBlendMode,
+                      color: itemOneColor,
+                    ),
+                    itemTwo: Image.asset(
+                      'assets/images/render-big.jpeg',
+                      colorBlendMode: itemTwoBlendMode,
+                      color: itemTwoColor,
+                    ),
 
                     /* Optional */
                     changePositionOnHover: reactOnHover,
@@ -120,13 +128,9 @@ class _AppState extends State<_App> {
                     handleSize: handleSize,
                     handleRadius:
                         BorderRadius.all(Radius.circular(handleRadius)),
-                    itemOneColor: itemOneColor,
-                    itemOneBlendMode: itemOneBlendMode,
-                    itemTwoColor: itemTwoColor,
-                    itemTwoBlendMode: itemTwoBlendMode,
-                    itemOneWrapper: (child) =>
+                    itemOneBuilder: (child) =>
                         itemOneWrapper?.call(child) ?? child,
-                    itemTwoWrapper: (child) =>
+                    itemTwoBuilder: (child) =>
                         itemTwoWrapper?.call(child) ?? child,
                   ),
                 ),

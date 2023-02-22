@@ -24,8 +24,8 @@ enum SliderDirection {
 /// Usage:
 /// ```dart
 ///  ImageCompareSlider(
-///    itemOne: const AssetImage('assets/render.png'),
-///    itemTwo: const AssetImage('assets/render_oc.png'),
+///    itemOne: const Image.asset('...'),
+///    itemTwo: const Image.asset('...'),
 ///  )
 /// ```
 /// See also:
@@ -39,23 +39,19 @@ class ImageCompareSlider extends StatefulWidget {
     required this.itemOne,
     required this.itemTwo,
     super.key,
-    this.itemOneWrapper,
-    this.itemTwoWrapper,
-    this.itemOneColor,
-    this.itemOneBlendMode,
-    this.itemTwoColor,
-    this.itemTwoBlendMode,
+    this.itemOneBuilder,
+    this.itemTwoBuilder,
     this.changePositionOnHover = false,
+    this.onPositionChange,
+    this.position = 0.5,
+    this.dividerColor = Colors.white,
+    this.dividerWidth = 2.5,
     this.handleSize = 20,
     this.handleRadius = const BorderRadius.all(Radius.circular(10)),
     this.fillHandle = false,
     this.hideHandle = false,
     this.handlePosition = 0.5,
-    this.onPositionChange,
     this.direction = SliderDirection.leftToRight,
-    this.position = 0.5,
-    this.dividerColor = Colors.white,
-    this.dividerWidth = 2.5,
   })  : portrait = direction == SliderDirection.topToBottom ||
             direction == SliderDirection.bottomToTop,
         assert(
@@ -72,19 +68,22 @@ class ImageCompareSlider extends StatefulWidget {
         );
 
   /// First component to show in slider.
-  final ImageProvider<Object> itemOne;
+  final Image itemOne;
 
   /// Second component to show in slider.
-  final ImageProvider<Object> itemTwo;
+  final Image itemTwo;
+
+  /// Wrapper for the first component.
+  final Widget Function(Widget child)? itemOneBuilder;
+
+  /// Wrapper for the second component.
+  final Widget Function(Widget child)? itemTwoBuilder;
 
   /// Whether the slider should follow the pointer on hover.
   final bool changePositionOnHover;
 
   /// Callback on position change, returns current position.
   final void Function(double position)? onPositionChange;
-
-  /// Direction of the slider.
-  final SliderDirection direction;
 
   /// Initial percentage position of divide (0-1).
   final double position;
@@ -110,23 +109,8 @@ class ImageCompareSlider extends StatefulWidget {
   /// Where to place the handle.
   final double handlePosition;
 
-  /// Wrapper for the first component.
-  final Widget Function(Widget child)? itemOneWrapper;
-
-  /// First component image color
-  final Color? itemOneColor;
-
-  /// First component image color blend mode
-  final BlendMode? itemOneBlendMode;
-
-  /// Wrapper for the second component.
-  final Widget Function(Widget child)? itemTwoWrapper;
-
-  /// First component image color
-  final Color? itemTwoColor;
-
-  /// First component image color blend mode
-  final BlendMode? itemTwoBlendMode;
+  /// Direction of the slider.
+  final SliderDirection direction;
 
   /// Whether to use portrait orientation.
   final bool portrait;
@@ -137,7 +121,6 @@ class ImageCompareSlider extends StatefulWidget {
 
 class _ImageCompareSliderState extends State<ImageCompareSlider> {
   late double position;
-
   void initPosition() => position = widget.position;
 
   @override
@@ -168,31 +151,51 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
     updatePosition(newPosition);
   }
 
+  Image generateImage(Image image1) => Image(
+        image: image1.image,
+        fit: BoxFit.cover,
+        /* Gathered properties */
+        color: image1.color,
+        colorBlendMode: image1.colorBlendMode,
+        alignment: image1.alignment,
+        loadingBuilder: image1.loadingBuilder,
+        frameBuilder: image1.frameBuilder,
+        errorBuilder: image1.errorBuilder,
+        excludeFromSemantics: image1.excludeFromSemantics,
+        filterQuality: image1.filterQuality,
+        gaplessPlayback: image1.gaplessPlayback,
+        isAntiAlias: image1.isAntiAlias,
+        matchTextDirection: image1.matchTextDirection,
+        opacity: image1.opacity,
+        repeat: image1.repeat,
+        semanticLabel: image1.semanticLabel,
+        /* Not used properties */
+        // width: image1.width,
+        // height: image1.height,
+        // centerSlice: image1.centerSlice,
+      );
+
   @override
   Widget build(BuildContext context) {
-    final firstImage = Image(
-      image: widget.itemOne,
-      fit: BoxFit.cover,
-      color: widget.itemOneColor,
-      colorBlendMode: widget.itemOneBlendMode,
-    );
-    final secondImage = Image(
-      image: widget.itemTwo,
-      fit: BoxFit.cover,
-      color: widget.itemTwoColor,
-      colorBlendMode: widget.itemTwoBlendMode,
-    );
+    final firstImage = generateImage(widget.itemOne);
+    final secondImage = generateImage(widget.itemTwo);
 
     final child = Stack(
       fit: StackFit.passthrough,
       children: [
-        widget.itemOneWrapper?.call(firstImage) ?? firstImage,
+        ClipRect(
+          clipper: _SliderClipper.invert(
+            position: position,
+            direction: widget.direction,
+          ),
+          child: widget.itemOneBuilder?.call(firstImage) ?? firstImage,
+        ),
         ClipRect(
           clipper: _SliderClipper(
             position: position,
             direction: widget.direction,
           ),
-          child: widget.itemTwoWrapper?.call(secondImage) ?? secondImage,
+          child: widget.itemTwoBuilder?.call(secondImage) ?? secondImage,
         ),
         GestureDetector(
           onTapDown: (details) => onDetection(details.globalPosition),
@@ -210,10 +213,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
               handlePosition: widget.handlePosition,
               handleRadius: widget.handleRadius,
             ),
-            child: Opacity(
-              opacity: 0,
-              child: Image(image: widget.itemOne, fit: BoxFit.cover),
-            ),
+            child: Opacity(opacity: 0, child: firstImage),
           ),
         ),
       ],

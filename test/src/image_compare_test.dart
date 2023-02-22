@@ -11,8 +11,8 @@ void main() {
     setUp(() {
       app = MaterialApp(
         home: ImageCompareSlider(
-          itemOne: const AssetImage('assets/images/render.png'),
-          itemTwo: const AssetImage('assets/images/render_oc.png'),
+          itemOne: Image.asset('assets/images/render.png'),
+          itemTwo: Image.asset('assets/images/render_oc.png'),
         ),
       );
     });
@@ -49,8 +49,8 @@ void main() {
         MaterialApp(
           home: ImageCompareSlider(
             key: key,
-            itemOne: const AssetImage('assets/images/render.png'),
-            itemTwo: const AssetImage('assets/images/render_oc.png'),
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
           ),
         ),
       );
@@ -64,8 +64,8 @@ void main() {
         MaterialApp(
           home: ImageCompareSlider(
             key: key,
-            itemOne: const AssetImage('assets/images/render.png'),
-            itemTwo: const AssetImage('assets/images/render_oc.png'),
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
             position: updatedPosition,
             dividerColor: updatedColor,
             dividerWidth: updatedStrokeWidth,
@@ -98,8 +98,8 @@ void main() {
         MaterialApp(
           home: ImageCompareSlider(
             direction: SliderDirection.rightToLeft,
-            itemOne: const AssetImage('assets/images/render.png'),
-            itemTwo: const AssetImage('assets/images/render_oc.png'),
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
             onPositionChange: (position) {
               newPosition = position;
             },
@@ -129,8 +129,8 @@ void main() {
         MaterialApp(
           home: ImageCompareSlider(
             direction: SliderDirection.topToBottom,
-            itemOne: const AssetImage('assets/images/render.png'),
-            itemTwo: const AssetImage('assets/images/render_oc.png'),
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
             onPositionChange: (position) {
               newPosition = position;
             },
@@ -155,8 +155,8 @@ void main() {
       final app = MaterialApp(
         home: ImageCompareSlider(
           direction: SliderDirection.bottomToTop,
-          itemOne: const AssetImage('assets/images/render.png'),
-          itemTwo: const AssetImage('assets/images/render_oc.png'),
+          itemOne: Image.asset('assets/images/render.png'),
+          itemTwo: Image.asset('assets/images/render_oc.png'),
           changePositionOnHover: true,
           onPositionChange: (position) {
             newPosition = position;
@@ -177,22 +177,19 @@ void main() {
       // New position is not equal to the initial position
       expect(newPosition, isNot(0.5));
     });
-    testWidgets('Test Wrapper and color/blend mode', (tester) async {
+    
+    testWidgets('Test Wrapper ', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: ImageCompareSlider(
             direction: SliderDirection.bottomToTop,
-            itemOne: const AssetImage('assets/images/render.png'),
-            itemTwo: const AssetImage('assets/images/render_oc.png'),
-            itemOneColor: Colors.red,
-            itemTwoColor: Colors.red,
-            itemOneBlendMode: BlendMode.srcIn,
-            itemTwoBlendMode: BlendMode.srcIn,
-            itemOneWrapper: (child) => ColoredBox(
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
+            itemOneBuilder: (child) => ColoredBox(
               color: Colors.blue,
               child: child,
             ),
-            itemTwoWrapper: (child) => ColoredBox(
+            itemTwoBuilder: (child) => ColoredBox(
               color: Colors.blue,
               child: child,
             ),
@@ -200,13 +197,7 @@ void main() {
         ),
       );
 
-      final imageCompareSlider =
-          tester.widget<ImageCompareSlider>(find.byType(ImageCompareSlider));
-
-      expect(imageCompareSlider.itemOneColor, Colors.red);
-      expect(imageCompareSlider.itemTwoColor, Colors.red);
-      expect(imageCompareSlider.itemOneBlendMode, BlendMode.srcIn);
-      expect(imageCompareSlider.itemTwoBlendMode, BlendMode.srcIn);
+      expect(find.byType(ColoredBox), findsNWidgets(2));
     });
   });
 }

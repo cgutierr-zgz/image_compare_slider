@@ -36,8 +36,8 @@ Use it:
 ```dart
 //...
 ImageCompareSlider(
-  itemOne: const AssetImage('...'),
-  itemTwo: const NetworkImage('...'),
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.network('...'),
 )
 //...
 ```
@@ -65,24 +65,20 @@ You can customize the widget with the following parameters:
 | `direction` | `SliderDirection` | The direction of the slider will clip the image |
 | `dividerColor` | `Color` | The color of the divider |
 | `dividerWidth` | `double` | The width of the divider |
-| `itemOneWrapper` | `Widget Function(Widget child)?` | The wrapper for the first image |
-| `itemTwoWrapper` | `Widget Function(Widget child)?` | The wrapper for the second image |
-| `itemOneColor` | `Color?` | Color applied to the first image |
-| `itemTwoColor` | `Color?` | Color applied to the second image |
-| `itemOneBlendMode` | `BlendMode?` | Blend mode applied to the first image's color |
-| `itemTwoBlendMode` | `BlendMode?` | Blend mode applied to the second image's color |
+| `itemOneBuilder` | `Widget Function(Widget child)?` | The wrapper for the first image |
+| `itemTwoBuilder` | `Widget Function(Widget child)?` | The wrapper for the second image |
 
 
-If you want to add some effects you can use the `itemOneWrapper` and `itemTwoWrapper` parameters to wrap the images with a `ColorFilter` or `ImageFilter`, or any other widget you want.
+If you want to add some effects you can use the `itemOneBuilder` and `itemTwoBuilder` parameters to wrap the images with a `ColorFilter` or `ImageFilter`, or any other widget you want.
 
 For example, to add a `ImageFilter` with a blur effect:
 
 ```dart
 // ...
 ImageCompareSlider(
-  itemOne: const AssetImage('...'),
-  itemTwo: const AssetImage('...'),
-  itemOneWrapper: (child) => ImageFiltered(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  itemOneBuilder: (child) => ImageFiltered(
   imageFilter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
     child: child,
   ),
@@ -93,6 +89,41 @@ ImageCompareSlider(
 Will result in:
 
 <img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example2.png" width="300">
+
+You can also pass any custom properties to the `Image` for `itemOne` and `itemTwo`, and most of the `Image` properties will be applied to the `ImageCompareSlider` widget.
+
+For example, adding a `colorBlendMode` with a `color` to itemOne:
+
+```dart
+// ...
+ImageCompareSlider(
+  itemOne: const Image.asset('...', color: Colors.red, colorBlendMode: BlendMode.overlay),
+  itemTwo: const Image.asset('...'),
+)
+// ...
+```
+
+Will result in:
+
+<img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example3.png" width="300">
+
+Customizing the handle and divider is also possible:
+
+```dart
+// ...
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  handleSize: 50,
+  handleRadius: const BorderRadius.all(Radius.circular(50)),
+  fillHandle: true,
+  dividerColor: Colors.black,
+  dividerWidth: 10,
+  handlePosition: 0.8,
+  // ...
+)
+// ...
+```
 
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg

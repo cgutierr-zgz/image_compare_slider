@@ -1,6 +1,6 @@
 name: image_compare_slider
 description: Easily compare two images with a slider and a draggable line/handle, fully customizable.
-version: 2.2.0
+version: 2.3.0
 
 repository: https://github.com/cgutierr-zgz/image_compare_slider
 homepage: https://github.com/cgutierr-zgz/image_compare_slider
@@ -12,8 +12,10 @@ screenshots:
     path: screenshots/example.png
   - description: 'Example of the Image Compare Slider with blur'
     path: screenshots/example2.png
-  - description: 'Example of the Image Compare Slider customized'
+  - description: 'Example of the Image Compare Slider with color and blend mode'
     path: screenshots/example3.png
+  - description: 'Example of the Image Compare Slider with custom handle'
+    path: screenshots/example4.png
 
 environment:
   sdk: ">=2.19.0 <3.0.0"

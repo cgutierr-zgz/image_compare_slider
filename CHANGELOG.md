@@ -1,3 +1,11 @@
+# 2.3.0
+
+- feat: changes ImageProvider<Object> to Image, to allow the use of custom color/blendMode, etc... directly by the user
+
+- feat: renames wrapper to itemOneBuilder and itemTwoBuilder
+
+- fix: slider now clips both images, each one with its own direction
+
 # 2.2.0
 
 - feat: imageFilter/ColorFilter was replacer by itemWrapper to allow the customization of both items directly to the user
