@@ -1,3 +1,7 @@
+# 2.3.0+3
+
+- fix: updates screenshots
+
 # 2.3.0+2
 
 - fix: updates README.md

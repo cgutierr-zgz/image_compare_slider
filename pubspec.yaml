@@ -1,6 +1,6 @@
 name: image_compare_slider
 description: Easily compare two images with a slider and a draggable line/handle, fully customizable.
-version: 2.3.0+2
+version: 2.3.0+3
 
 repository: https://github.com/cgutierr-zgz/image_compare_slider
 homepage: https://github.com/cgutierr-zgz/image_compare_slider
@@ -10,6 +10,8 @@ documentation: https://pub.dev/documentation/image_compare_slider/latest/
 screenshots:
   - description: 'Example of the Image Compare Slider'
     path: screenshots/example.png
+  - description: 'Video of the Image Compare Slider'
+    path: screenshots/video.gif
   - description: 'Example of the Image Compare Slider with blur'
     path: screenshots/example2.png
   - description: 'Example of the Image Compare Slider with color and blend mode'
