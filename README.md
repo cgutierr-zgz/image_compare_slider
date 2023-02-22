@@ -53,8 +53,8 @@ You can customize the widget with the following parameters:
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `itemOne` | `ImageProvider` | The first image to compare |
-| `itemTwo` | `ImageProvider` | The second image to compare |
+| `itemOne` | `Image` | The first image to compare |
+| `itemTwo` | `Image` | The second image to compare |
 | `changePositionOnHover` | `bool` | If the slider should change position when the mouse is over it |
 | `handleSize` | `double` | The size of the handle |
 | `handleRadius` | `BorderRadius` | The radius of the handle |
