@@ -125,6 +125,10 @@ ImageCompareSlider(
 // ...
 ```
 
+Will result in:
+
+<img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example4.png" width="300">
+
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
 [ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml

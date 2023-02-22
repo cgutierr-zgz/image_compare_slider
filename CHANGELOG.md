@@ -1,3 +1,7 @@
+# 2.3.0+1
+
+- fix: updates README.md
+
 # 2.3.0
 
 - feat: changes ImageProvider<Object> to Image, to allow the use of custom color/blendMode, etc... directly by the user
