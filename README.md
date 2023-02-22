@@ -61,6 +61,7 @@ You can customize the widget with the following parameters:
 | `fillHandle` | `bool` | If the handle should be filled |
 | `hideHandle` | `bool` | If the handle should be hidden |
 | `handlePosition` | `double` | The position of the handle relative to the slider |
+| `handleFollowsPosition` | `bool` | If the handle should follow the position of the slider |
 | `onPositionChange` | `void Function(double position)?` | The callback to be called when the position changes |
 | `direction` | `SliderDirection` | The direction of the slider will clip the image |
 | `dividerColor` | `Color` | The color of the divider |

@@ -39,6 +39,7 @@ class _AppState extends State<_App> {
   double position = 0.5;
   double handlePosition = 0.5;
   double handleSize = 20;
+  bool handleFollowsP = false;
   bool fillHandle = false;
   double handleRadius = 10;
   Color? itemOneColor;
@@ -132,6 +133,7 @@ class _AppState extends State<_App> {
                         itemOneWrapper?.call(child) ?? child,
                     itemTwoBuilder: (child) =>
                         itemTwoWrapper?.call(child) ?? child,
+                    handleFollowsPosition: handleFollowsP,
                   ),
                 ),
               ),
@@ -205,6 +207,9 @@ class _AppState extends State<_App> {
                   }),
                   switcher('Fill handle', fillHandle, (v) {
                     setState(() => fillHandle = v);
+                  }),
+                  switcher('Follows position', handleFollowsP, (v) {
+                    setState(() => handleFollowsP = v);
                   }),
                   slider('Position: ${handlePosition.toStringAsFixed(2)}',
                       handlePosition, (v) {

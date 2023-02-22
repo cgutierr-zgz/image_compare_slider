@@ -1,3 +1,7 @@
+# 2.4.0
+
+- feat: adds handleFollowsPosition to allow the handle to follow the position of the slider
+
 # 2.3.0+3
 
 - fix: updates screenshots

@@ -51,9 +51,14 @@ class ImageCompareSlider extends StatefulWidget {
     this.fillHandle = false,
     this.hideHandle = false,
     this.handlePosition = 0.5,
+    this.handleFollowsPosition = false,
     this.direction = SliderDirection.leftToRight,
   })  : portrait = direction == SliderDirection.topToBottom ||
             direction == SliderDirection.bottomToTop,
+        assert(
+          dividerWidth >= 0,
+          'dividerWidth must be greater or equal to 0',
+        ),
         assert(
           position >= 0 && position <= 1,
           'initialPosition must be between 0 and 1',
@@ -109,6 +114,9 @@ class ImageCompareSlider extends StatefulWidget {
   /// Where to place the handle.
   final double handlePosition;
 
+  /// Wheter or not the handle should follow the position while dragging.
+  final bool handleFollowsPosition;
+
   /// Direction of the slider.
   final SliderDirection direction;
 
@@ -121,18 +129,23 @@ class ImageCompareSlider extends StatefulWidget {
 
 class _ImageCompareSliderState extends State<ImageCompareSlider> {
   late double position;
+  late double handlePosition;
+
   void initPosition() => position = widget.position;
+  void initHandlePosition() => handlePosition = widget.handlePosition;
 
   @override
   void didUpdateWidget(ImageCompareSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.position != oldWidget.position) initPosition();
+    if (widget.handlePosition != oldWidget.handlePosition) initHandlePosition();
   }
 
   @override
   void initState() {
     super.initState();
     initPosition();
+    initHandlePosition();
   }
 
   void updatePosition(double newPosition) {
@@ -148,6 +161,15 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
         ? localPosition.dy / box.size.height
         : localPosition.dx / box.size.width;
     newPosition = newPosition.clamp(0.0, 1.0);
+
+    if (widget.handleFollowsPosition) {
+      final handlePos = widget.portrait
+          ? localPosition.dx / box.size.width
+          : localPosition.dy / box.size.height;
+
+      setState(() => handlePosition = handlePos);
+    }
+
     updatePosition(newPosition);
   }
 
@@ -210,7 +232,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
               fillHandle: widget.fillHandle,
               handleSize: widget.handleSize,
               hideHandle: widget.hideHandle,
-              handlePosition: widget.handlePosition,
+              handlePosition: handlePosition,
               handleRadius: widget.handleRadius,
             ),
             child: Opacity(opacity: 0, child: firstImage),

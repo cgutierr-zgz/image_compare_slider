@@ -26,6 +26,8 @@ class _HandlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final handle = hideHandle ? 0.0 : handleSize;
+    final color = strokeWidth == 0.0 ? Colors.transparent : this.color;
+
     final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
