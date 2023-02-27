@@ -20,38 +20,63 @@ class _HandlePainter extends CustomPainter {
   final bool hideHandle;
   final bool fillHandle;
   final double handlePosition;
-  final double handleSize;
+  final Size handleSize;
   final BorderRadius handleRadius;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final handle = hideHandle ? 0.0 : handleSize;
-    final color = strokeWidth == 0.0 ? Colors.transparent : this.color;
+    final handle = hideHandle
+        ? Size.zero
+        : portrait
+            ? Size(handleSize.height, handleSize.width)
+            : Size(handleSize.width, handleSize.height);
+    final color = strokeWidth == 0.0000 ? Colors.transparent : this.color;
 
     final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
 
     final dx = portrait ? size.width / 2 : size.width * position;
-
     final dy = portrait ? size.height * position : size.height / 2;
 
-    var shouldPaint = true;
     if (portrait) {
-      shouldPaint = handlePosition * size.height > handle / 2;
+      canvas
+        ..drawLine(
+          Offset(size.width, dy),
+          Offset(
+            handlePosition * size.width + handle.width * size.width / 2,
+            dy,
+          ),
+          paint,
+        )
+        ..drawLine(
+          Offset(0, dy),
+          Offset(
+            handlePosition * size.width - handle.width * size.width / 2,
+            dy,
+          ),
+          paint,
+        );
     } else {
-      shouldPaint = handlePosition * size.width > handle / 2;
-    }
-
-    if (shouldPaint) {
-      canvas.drawLine(
-        portrait ? Offset(0, dy) : Offset(dx, 0),
-        portrait
-            ? Offset(size.width * handlePosition - handle / 2, dy)
-            : Offset(dx, size.height * handlePosition - handle / 2),
-        paint,
-      );
+      canvas
+        ..drawLine(
+          Offset(dx, 0),
+          Offset(
+            dx,
+            handlePosition * size.height - handle.height * size.height / 2,
+          ),
+          paint,
+        )
+        ..drawLine(
+          Offset(dx, size.height),
+          Offset(
+            dx,
+            handlePosition * size.height + handle.height * size.height / 2,
+          ),
+          paint,
+        );
     }
 
     if (!hideHandle) {
@@ -69,29 +94,13 @@ class _HandlePainter extends CustomPainter {
 
       final rect = Rect.fromCenter(
         center: center,
-        width: handle,
-        height: handle,
+        width: size.width * handle.width,
+        height: size.height * handle.height,
       );
 
       if (fillHandle) canvas.drawRRect(handleRadius.toRRect(rect), circlePaint);
 
       canvas.drawRRect(handleRadius.toRRect(rect), borderPaint);
-    }
-
-    if (portrait) {
-      shouldPaint = (1 - handlePosition) * size.height > handle / 2;
-    } else {
-      shouldPaint = (1 - handlePosition) * size.width > handle / 2;
-    }
-
-    if (shouldPaint) {
-      canvas.drawLine(
-        portrait
-            ? Offset(size.width * handlePosition + handle / 2, dy)
-            : Offset(dx, size.height * handlePosition + handle / 2),
-        portrait ? Offset(size.width, dy) : Offset(dx, size.height),
-        paint,
-      );
     }
   }
 

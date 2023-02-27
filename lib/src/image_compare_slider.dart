@@ -46,7 +46,7 @@ class ImageCompareSlider extends StatefulWidget {
     this.position = 0.5,
     this.dividerColor = Colors.white,
     this.dividerWidth = 2.5,
-    this.handleSize = 20,
+    this.handleSize = const Size(20, 20),
     this.handleRadius = const BorderRadius.all(Radius.circular(10)),
     this.fillHandle = false,
     this.hideHandle = false,
@@ -66,10 +66,6 @@ class ImageCompareSlider extends StatefulWidget {
         assert(
           handlePosition >= 0 && handlePosition <= 1,
           'handlePosition must be between 0 and 1',
-        ),
-        assert(
-          handleSize >= 0,
-          'handleSize must be greater or equal to 0',
         );
 
   /// First component to show in slider.
@@ -100,7 +96,7 @@ class ImageCompareSlider extends StatefulWidget {
   final double dividerWidth;
 
   /// Handle size.
-  final double handleSize;
+  final Size handleSize;
 
   /// Handle radius.
   final BorderRadius handleRadius;
@@ -143,6 +139,10 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   @override
   void initState() {
+    assert(
+      widget.handleSize.width >= 0 && widget.handleSize.height >= 0,
+      'handleSize must be greater or equal to 0',
+    );
     super.initState();
     initPosition();
     initHandlePosition();

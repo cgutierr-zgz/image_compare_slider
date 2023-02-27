@@ -38,9 +38,10 @@ class _AppState extends State<_App> {
   bool hideHandle = false;
   double position = 0.5;
   double handlePosition = 0.5;
-  double handleSize = 20;
+  double handleSizeHeight = 0.25;
+  double handleSizeWidth = 0.05;
   bool handleFollowsP = false;
-  bool fillHandle = false;
+  bool fillHandle = true;
   double handleRadius = 10;
   Color? itemOneColor;
   Color? itemTwoColor;
@@ -126,7 +127,7 @@ class _AppState extends State<_App> {
                     hideHandle: hideHandle,
                     handlePosition: handlePosition,
                     fillHandle: fillHandle,
-                    handleSize: handleSize,
+                    handleSize: Size(handleSizeWidth, handleSizeHeight),
                     handleRadius:
                         BorderRadius.all(Radius.circular(handleRadius)),
                     itemOneBuilder: (child) =>
@@ -219,10 +220,14 @@ class _AppState extends State<_App> {
                       handleRadius, (v) {
                     setState(() => handleRadius = v);
                   }, max: 50, min: 0),
-                  slider('Size: ${handleSize.toStringAsFixed(2)}', handleSize,
+                  slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}', handleSizeHeight,
                       (v) {
-                    setState(() => handleSize = v);
-                  }, max: 100, min: 0),
+                    setState(() => handleSizeHeight = v);
+                  }, max: 1, min: 0),
+                  slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}', handleSizeWidth,
+                      (v) {
+                    setState(() => handleSizeWidth = v);
+                  }, max: 1, min: 0),
                 ],
               ),
               _DividerWithText(

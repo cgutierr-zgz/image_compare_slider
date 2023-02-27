@@ -56,7 +56,7 @@ You can customize the widget with the following parameters:
 | `itemOne` | `Image` | The first image to compare |
 | `itemTwo` | `Image` | The second image to compare |
 | `changePositionOnHover` | `bool` | If the slider should change position when the mouse is over it |
-| `handleSize` | `double` | The size of the handle |
+| `handleSize` | `Size` | The size of the handle |
 | `handleRadius` | `BorderRadius` | The radius of the handle |
 | `fillHandle` | `bool` | If the handle should be filled |
 | `hideHandle` | `bool` | If the handle should be hidden |
@@ -115,7 +115,7 @@ Customizing the handle and divider is also possible:
 ImageCompareSlider(
   itemOne: const Image.asset('...'),
   itemTwo: const Image.asset('...'),
-  handleSize: 50,
+  handleSize: Size(0.05, 0.05),
   handleRadius: const BorderRadius.all(Radius.circular(50)),
   fillHandle: true,
   dividerColor: Colors.black,

@@ -1,3 +1,7 @@
+# 2.5.0
+
+- feat: changes handleSize from double to Size to allow the customization of the handle width and height independently
+
 # 2.4.0
 
 - feat: adds handleFollowsPosition to allow the handle to follow the position of the slider
