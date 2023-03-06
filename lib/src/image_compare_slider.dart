@@ -139,11 +139,11 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   @override
   void initState() {
+    super.initState();
     assert(
       widget.handleSize.width >= 0 && widget.handleSize.height >= 0,
       'handleSize must be greater or equal to 0',
     );
-    super.initState();
     initPosition();
     initHandlePosition();
   }
@@ -173,28 +173,28 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
     updatePosition(newPosition);
   }
 
-  Image generateImage(Image image1) => Image(
-        image: image1.image,
-        fit: BoxFit.cover,
+  Image generateImage(Image image) => Image(
+        image: image.image,
+        fit: BoxFit.contain,
         /* Gathered properties */
-        color: image1.color,
-        colorBlendMode: image1.colorBlendMode,
-        alignment: image1.alignment,
-        loadingBuilder: image1.loadingBuilder,
-        frameBuilder: image1.frameBuilder,
-        errorBuilder: image1.errorBuilder,
-        excludeFromSemantics: image1.excludeFromSemantics,
-        filterQuality: image1.filterQuality,
-        gaplessPlayback: image1.gaplessPlayback,
-        isAntiAlias: image1.isAntiAlias,
-        matchTextDirection: image1.matchTextDirection,
-        opacity: image1.opacity,
-        repeat: image1.repeat,
-        semanticLabel: image1.semanticLabel,
+        color: image.color,
+        colorBlendMode: image.colorBlendMode,
+        alignment: image.alignment,
+        loadingBuilder: image.loadingBuilder,
+        frameBuilder: image.frameBuilder,
+        errorBuilder: image.errorBuilder,
+        excludeFromSemantics: image.excludeFromSemantics,
+        filterQuality: image.filterQuality,
+        gaplessPlayback: image.gaplessPlayback,
+        isAntiAlias: image.isAntiAlias,
+        matchTextDirection: image.matchTextDirection,
+        opacity: image.opacity,
+        repeat: image.repeat,
+        semanticLabel: image.semanticLabel,
         /* Not used properties */
-        // width: image1.width,
-        // height: image1.height,
-        // centerSlice: image1.centerSlice,
+        // width: image.width,
+        // height: image.height,
+        // centerSlice: image.centerSlice,
       );
 
   @override

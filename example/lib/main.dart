@@ -38,8 +38,8 @@ class _AppState extends State<_App> {
   bool hideHandle = false;
   double position = 0.5;
   double handlePosition = 0.5;
-  double handleSizeHeight = 0.25;
-  double handleSizeWidth = 0.05;
+  double handleSizeHeight = 75;
+  double handleSizeWidth = 7.5;
   bool handleFollowsP = false;
   bool fillHandle = true;
   double handleRadius = 10;
@@ -223,11 +223,11 @@ class _AppState extends State<_App> {
                   slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}', handleSizeHeight,
                       (v) {
                     setState(() => handleSizeHeight = v);
-                  }, max: 1, min: 0),
+                  }, max: 100, min: 0),
                   slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}', handleSizeWidth,
                       (v) {
                     setState(() => handleSizeWidth = v);
-                  }, max: 1, min: 0),
+                  }, max: 100, min: -50),
                 ],
               ),
               _DividerWithText(

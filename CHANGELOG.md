@@ -1,3 +1,7 @@
+# 2.6.0
+
+- fix: Fixes the handle being painted relative to the parent widget instead of the canvas
+
 # 2.5.0
 
 - feat: changes handleSize from double to Size to allow the customization of the handle width and height independently
