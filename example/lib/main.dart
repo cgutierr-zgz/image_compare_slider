@@ -130,9 +130,9 @@ class _AppState extends State<_App> {
                     handleSize: Size(handleSizeWidth, handleSizeHeight),
                     handleRadius:
                         BorderRadius.all(Radius.circular(handleRadius)),
-                    itemOneBuilder: (child) =>
+                    itemOneBuilder: (child, context) =>
                         itemOneWrapper?.call(child) ?? child,
-                    itemTwoBuilder: (child) =>
+                    itemTwoBuilder: (child, context) =>
                         itemTwoWrapper?.call(child) ?? child,
                     handleFollowsPosition: handleFollowsP,
                   ),
