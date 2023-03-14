@@ -1,3 +1,8 @@
+# 2.7.0
+
+- fix: itemBuilderOne and itemBuilderTwo now have context as a parameter
+- feat: Adds photoRadius to allow the customization of the radius of the images
+
 # 2.6.0
 
 - fix: Fixes the handle being painted relative to the parent widget instead of the canvas

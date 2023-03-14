@@ -216,11 +216,11 @@ void main() {
             direction: SliderDirection.bottomToTop,
             itemOne: Image.asset('assets/images/render.png'),
             itemTwo: Image.asset('assets/images/render_oc.png'),
-            itemOneBuilder: (child) => ColoredBox(
+            itemOneBuilder: (child, context) => ColoredBox(
               color: Colors.blue,
               child: child,
             ),
-            itemTwoBuilder: (child) => ColoredBox(
+            itemTwoBuilder: (child, context) => ColoredBox(
               color: Colors.blue,
               child: child,
             ),
@@ -228,7 +228,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(ColoredBox), findsNWidgets(2));
+      expect(find.byType(ColoredBox), findsNWidgets(3));
     });
   });
 }

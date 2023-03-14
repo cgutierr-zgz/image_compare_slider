@@ -66,8 +66,9 @@ You can customize the widget with the following parameters:
 | `direction` | `SliderDirection` | The direction of the slider will clip the image |
 | `dividerColor` | `Color` | The color of the divider |
 | `dividerWidth` | `double` | The width of the divider |
-| `itemOneBuilder` | `Widget Function(Widget child)?` | The wrapper for the first image |
-| `itemTwoBuilder` | `Widget Function(Widget child)?` | The wrapper for the second image |
+| `itemOneBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the first image |
+| `itemTwoBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the second image |
+| `photoRadius` | `BorderRadiusGeometry` | Radius of the photo.
 
 
 If you want to add some effects you can use the `itemOneBuilder` and `itemTwoBuilder` parameters to wrap the images with a `ColorFilter` or `ImageFilter`, or any other widget you want.
@@ -79,7 +80,7 @@ For example, to add a `ImageFilter` with a blur effect:
 ImageCompareSlider(
   itemOne: const Image.asset('...'),
   itemTwo: const Image.asset('...'),
-  itemOneBuilder: (child) => ImageFiltered(
+  itemOneBuilder: (child, context) => ImageFiltered(
   imageFilter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
     child: child,
   ),
@@ -129,6 +130,20 @@ ImageCompareSlider(
 Will result in:
 
 <img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example4.png" width="300">
+
+If you are having problems because height/width is not the same for both images, consider using Intrinsics in the builder:
+
+```dart
+// ...
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  itemOneBuilder: (child, context) => IntrinsicHeight(child: child),
+  itemTwoBuilder: (child, context) => IntrinsicHeight(child: child),
+  // or
+  itemOneBuilder: (child, context) => IntrinsicWidth(child: child),
+  itemTwoBuilder: (child, context) => IntrinsicWidth(child: child),
+)
 
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg

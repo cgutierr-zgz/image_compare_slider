@@ -18,6 +18,41 @@ enum SliderDirection {
   bottomToTop,
 }
 
+// TODO(carlito): Implement this.
+///// Haptic feedback type.
+//enum HapticFeedbackType {
+//  /// A light impact.
+//  lightImpact,
+//
+//  /// A medium impact.
+//  mediumImpact,
+//
+//  /// A heavy impact.
+//  heavyImpact,
+//
+//  /// A selection click.
+//  selectionClick,
+//
+//  /// A vibration.
+//  vibration;
+//
+//  /// Calls the haptic feedback.
+//  Future<void> call() {
+//    switch (this) {
+//      case HapticFeedbackType.lightImpact:
+//        return HapticFeedback.lightImpact();
+//      case HapticFeedbackType.mediumImpact:
+//        return HapticFeedback.mediumImpact();
+//      case HapticFeedbackType.heavyImpact:
+//        return HapticFeedback.heavyImpact();
+//      case HapticFeedbackType.selectionClick:
+//        return HapticFeedback.selectionClick();
+//      case HapticFeedbackType.vibration:
+//        return HapticFeedback.vibrate();
+//    }
+//  }
+//}
+
 /// {@template flutter_compare_slider}
 ///  A Flutter widget that allows you to compare two images.
 ///
@@ -53,6 +88,7 @@ class ImageCompareSlider extends StatefulWidget {
     this.handlePosition = 0.5,
     this.handleFollowsPosition = false,
     this.direction = SliderDirection.leftToRight,
+    this.photoRadius = BorderRadius.zero,
   })  : portrait = direction == SliderDirection.topToBottom ||
             direction == SliderDirection.bottomToTop,
         assert(
@@ -75,10 +111,10 @@ class ImageCompareSlider extends StatefulWidget {
   final Image itemTwo;
 
   /// Wrapper for the first component.
-  final Widget Function(Widget child)? itemOneBuilder;
+  final Widget Function(Widget child, BuildContext context)? itemOneBuilder;
 
   /// Wrapper for the second component.
-  final Widget Function(Widget child)? itemTwoBuilder;
+  final Widget Function(Widget child, BuildContext context)? itemTwoBuilder;
 
   /// Whether the slider should follow the pointer on hover.
   final bool changePositionOnHover;
@@ -118,6 +154,17 @@ class ImageCompareSlider extends StatefulWidget {
 
   /// Whether to use portrait orientation.
   final bool portrait;
+
+  /// Radius of the photo.
+  final BorderRadiusGeometry photoRadius;
+
+  // TODO(carlito): Implement these features.
+  /// Whether to only handle drag events on the handle.
+  // final bool onlyHandleDraggable;
+  /// Whether to enable haptic feedback.
+  // final bool hapticFeedbackEnabled;
+  /// Type of haptic feedback.
+  // final HapticFeedbackType hapticFeedbackType;
 
   @override
   State<ImageCompareSlider> createState() => _ImageCompareSliderState();
@@ -170,6 +217,10 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
       setState(() => handlePosition = handlePos);
     }
 
+    // TODO(carlito): Implement these features.
+    // if (widget.onlyHandleDraggable) {}
+    // if (widget.enableHapticFeedback) widget.hapticFeedbackType.call();
+
     updatePosition(newPosition);
   }
 
@@ -199,46 +250,54 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final firstImage = generateImage(widget.itemOne);
-    final secondImage = generateImage(widget.itemTwo);
+    final generatedFirstImage = generateImage(widget.itemOne);
+    final generatedSecondImage = generateImage(widget.itemTwo);
+    final firstImage =
+        widget.itemOneBuilder?.call(generatedFirstImage, context) ??
+            generatedFirstImage;
+    final secondImage =
+        widget.itemTwoBuilder?.call(generatedSecondImage, context) ??
+            generatedSecondImage;
 
-    final child = Stack(
-      fit: StackFit.passthrough,
-      children: [
-        ClipRect(
-          clipper: _SliderClipper.invert(
-            position: position,
-            direction: widget.direction,
-          ),
-          child: widget.itemOneBuilder?.call(firstImage) ?? firstImage,
-        ),
-        ClipRect(
-          clipper: _SliderClipper(
-            position: position,
-            direction: widget.direction,
-          ),
-          child: widget.itemTwoBuilder?.call(secondImage) ?? secondImage,
-        ),
-        GestureDetector(
-          onTapDown: (details) => onDetection(details.globalPosition),
-          onPanUpdate: (details) => onDetection(details.globalPosition),
-          onPanEnd: (_) => updatePosition(position),
-          child: CustomPaint(
-            painter: _HandlePainter(
-              position: position,
-              color: widget.dividerColor,
-              strokeWidth: widget.dividerWidth,
-              portrait: widget.portrait,
-              fillHandle: widget.fillHandle,
-              handleSize: widget.handleSize,
-              hideHandle: widget.hideHandle,
-              handlePosition: handlePosition,
-              handleRadius: widget.handleRadius,
+    final child = ClipRRect(
+      borderRadius: widget.photoRadius,
+      child: GestureDetector(
+        onTapDown: (details) => onDetection(details.globalPosition),
+        onPanUpdate: (details) => onDetection(details.globalPosition),
+        onPanEnd: (_) => updatePosition(position),
+        child: Stack(
+          children: [
+            ClipRect(
+              clipper: _SliderClipper.inverted(
+                position: position,
+                direction: widget.direction,
+              ),
+              child: firstImage,
             ),
-            child: Opacity(opacity: 0, child: firstImage),
-          ),
+            ClipRect(
+              clipper: _SliderClipper(
+                position: position,
+                direction: widget.direction,
+              ),
+              child: secondImage,
+            ),
+            CustomPaint(
+              painter: _HandlePainter(
+                position: position,
+                color: widget.dividerColor,
+                strokeWidth: widget.dividerWidth,
+                portrait: widget.portrait,
+                fillHandle: widget.fillHandle,
+                handleSize: widget.handleSize,
+                hideHandle: widget.hideHandle,
+                handlePosition: handlePosition,
+                handleRadius: widget.handleRadius,
+              ),
+              child: Opacity(opacity: 0, child: secondImage),
+            ),
+          ],
         ),
-      ],
+      ),
     );
 
     return widget.changePositionOnHover

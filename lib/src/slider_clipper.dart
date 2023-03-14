@@ -3,7 +3,7 @@ part of 'image_compare_slider.dart';
 class _SliderClipper extends CustomClipper<Rect> {
   _SliderClipper({required this.position, required this.direction})
       : invert = false;
-  _SliderClipper.invert({required this.position, required this.direction})
+  _SliderClipper.inverted({required this.position, required this.direction})
       : invert = true;
 
   final bool invert;
