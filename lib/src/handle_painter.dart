@@ -25,7 +25,7 @@ class _HandlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final color = strokeWidth == 0.0000 ? Colors.transparent : this.color;
+    final color = strokeWidth <= 0.0000 ? Colors.transparent : this.color;
     final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth

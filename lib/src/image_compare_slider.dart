@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 part 'slider_clipper.dart';
 part 'handle_painter.dart';
+part 'image_compare_slider_theme.dart';
 
 /// Slider direction.
 enum SliderDirection {
@@ -41,24 +42,20 @@ class ImageCompareSlider extends StatefulWidget {
     super.key,
     this.itemOneBuilder,
     this.itemTwoBuilder,
-    this.changePositionOnHover = false,
+    this.changePositionOnHover,
     this.onPositionChange,
     this.position = 0.5,
-    this.dividerColor = Colors.white,
-    this.dividerWidth = 2.5,
-    this.handleSize = const Size(20, 20),
-    this.handleRadius = const BorderRadius.all(Radius.circular(10)),
-    this.fillHandle = false,
-    this.hideHandle = false,
+    this.dividerColor,
+    this.dividerWidth,
+    this.handleSize,
+    this.handleRadius,
+    this.fillHandle,
+    this.hideHandle,
     this.handlePosition = 0.5,
-    this.handleFollowsPosition = false,
-    this.direction = SliderDirection.leftToRight,
+    this.handleFollowsPosition,
+    this.direction,
   })  : portrait = direction == SliderDirection.topToBottom ||
             direction == SliderDirection.bottomToTop,
-        assert(
-          dividerWidth >= 0,
-          'dividerWidth must be greater or equal to 0',
-        ),
         assert(
           position >= 0 && position <= 1,
           'initialPosition must be between 0 and 1',
@@ -75,13 +72,13 @@ class ImageCompareSlider extends StatefulWidget {
   final Image itemTwo;
 
   /// Wrapper for the first component.
-  final Widget Function(Widget child)? itemOneBuilder;
+  final Widget Function(Widget child, BuildContext context)? itemOneBuilder;
 
   /// Wrapper for the second component.
-  final Widget Function(Widget child)? itemTwoBuilder;
+  final Widget Function(Widget child, BuildContext context)? itemTwoBuilder;
 
   /// Whether the slider should follow the pointer on hover.
-  final bool changePositionOnHover;
+  final bool? changePositionOnHover;
 
   /// Callback on position change, returns current position.
   final void Function(double position)? onPositionChange;
@@ -90,31 +87,31 @@ class ImageCompareSlider extends StatefulWidget {
   final double position;
 
   /// Color of the divider
-  final Color dividerColor;
+  final Color? dividerColor;
 
   /// Width of the divider
-  final double dividerWidth;
+  final double? dividerWidth;
 
   /// Handle size.
-  final Size handleSize;
+  final Size? handleSize;
 
   /// Handle radius.
-  final BorderRadius handleRadius;
+  final BorderRadius? handleRadius;
 
   /// Wether to fill the handle.
-  final bool fillHandle;
+  final bool? fillHandle;
 
   /// Whether to hide the handle.
-  final bool hideHandle;
+  final bool? hideHandle;
 
   /// Where to place the handle.
   final double handlePosition;
 
   /// Wheter or not the handle should follow the position while dragging.
-  final bool handleFollowsPosition;
+  final bool? handleFollowsPosition;
 
   /// Direction of the slider.
-  final SliderDirection direction;
+  final SliderDirection? direction;
 
   /// Whether to use portrait orientation.
   final bool portrait;
@@ -124,6 +121,7 @@ class ImageCompareSlider extends StatefulWidget {
 }
 
 class _ImageCompareSliderState extends State<ImageCompareSlider> {
+  late ImageCompareSliderThemeData theme;
   late double position;
   late double handlePosition;
 
@@ -140,8 +138,9 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
   @override
   void initState() {
     super.initState();
+    theme = ImageCompareSliderTheme.of(context);
     assert(
-      widget.handleSize.width >= 0 && widget.handleSize.height >= 0,
+      theme.handleSize.width >= 0 && theme.handleSize.height >= 0,
       'handleSize must be greater or equal to 0',
     );
     initPosition();
@@ -162,7 +161,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
         : localPosition.dx / box.size.width;
     newPosition = newPosition.clamp(0.0, 1.0);
 
-    if (widget.handleFollowsPosition) {
+    if (theme.handleFollowsPosition) {
       final handlePos = widget.portrait
           ? localPosition.dx / box.size.width
           : localPosition.dy / box.size.height;
@@ -210,14 +209,15 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
             position: position,
             direction: widget.direction,
           ),
-          child: widget.itemOneBuilder?.call(firstImage) ?? firstImage,
+          child: widget.itemOneBuilder?.call(firstImage, context) ?? firstImage,
         ),
         ClipRect(
           clipper: _SliderClipper(
             position: position,
             direction: widget.direction,
           ),
-          child: widget.itemTwoBuilder?.call(secondImage) ?? secondImage,
+          child:
+              widget.itemTwoBuilder?.call(secondImage, context) ?? secondImage,
         ),
         GestureDetector(
           onTapDown: (details) => onDetection(details.globalPosition),

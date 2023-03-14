@@ -16,9 +16,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: _App(),
+      theme: ThemeData.light().copyWith(
+        extensions: <ThemeExtension<dynamic>>[
+          const ImageCompareSliderThemeData(
+            dividerColor: Color(0xFF1E88E5),
+          ),
+        ],
+      ),
+      home: const _App(),
     );
   }
 }
@@ -220,12 +227,12 @@ class _AppState extends State<_App> {
                       handleRadius, (v) {
                     setState(() => handleRadius = v);
                   }, max: 50, min: 0),
-                  slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}', handleSizeHeight,
-                      (v) {
+                  slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}',
+                      handleSizeHeight, (v) {
                     setState(() => handleSizeHeight = v);
                   }, max: 100, min: 0),
-                  slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}', handleSizeWidth,
-                      (v) {
+                  slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}',
+                      handleSizeWidth, (v) {
                     setState(() => handleSizeWidth = v);
                   }, max: 100, min: -50),
                 ],
