@@ -144,6 +144,7 @@ ImageCompareSlider(
   itemOneBuilder: (child, context) => IntrinsicWidth(child: child),
   itemTwoBuilder: (child, context) => IntrinsicWidth(child: child),
 )
+```
 
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
