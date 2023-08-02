@@ -148,6 +148,13 @@ ImageCompareSlider(
 )
 ```
 
+## TODO 📝
+
+- [ ] Add custom handle widget
+- [ ] Add custom divider widget (wavy, dashed, etc)
+- [ ] Add shadow to handle/divider
+- [ ] Enable extra size for the divider so the handle/divider can be bigger than the image | [example](https://github.com/cgutierr-zgz/image_compare_slider/issues/11#issue-1833036061)
+
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
 [ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml
