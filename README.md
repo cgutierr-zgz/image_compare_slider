@@ -65,6 +65,8 @@ You can customize the widget with the following parameters:
 | `onPositionChange` | `void Function(double position)?` | The callback to be called when the position changes |
 | `direction` | `SliderDirection` | The direction of the slider will clip the image |
 | `dividerColor` | `Color` | The color of the divider |
+| `handleColor` | `Color` | The color of the handle |
+| `handleOutlineColor` | `Color` | The color of the handle outline |
 | `dividerWidth` | `double` | The width of the divider |
 | `itemOneBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the first image |
 | `itemTwoBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the second image |

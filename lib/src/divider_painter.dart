@@ -1,9 +1,11 @@
 part of 'image_compare_slider.dart';
 
-class _HandlePainter extends CustomPainter {
-  const _HandlePainter({
+class _DividerPainter extends CustomPainter {
+  const _DividerPainter({
     required this.position,
     required this.color,
+    required this.handleColor,
+    required this.handleOutlineColor,
     required this.strokeWidth,
     required this.portrait,
     required this.hideHandle,
@@ -15,6 +17,8 @@ class _HandlePainter extends CustomPainter {
 
   final double position;
   final Color color;
+  final Color handleColor;
+  final Color handleOutlineColor;
   final double strokeWidth;
   final bool portrait;
   final bool hideHandle;
@@ -58,7 +62,7 @@ class _HandlePainter extends CustomPainter {
 
     if (!hideHandle) {
       final circlePaint = Paint()
-        ..color = color
+        ..color = handleColor
         ..style = PaintingStyle.fill;
       final rect = Rect.fromCenter(
         center: Offset(dx, dy),
@@ -67,10 +71,16 @@ class _HandlePainter extends CustomPainter {
       );
 
       if (fillHandle) canvas.drawRRect(handleRadius.toRRect(rect), circlePaint);
-      canvas.drawRRect(handleRadius.toRRect(rect), paint);
+
+      final handleOutlinePaint = Paint()
+        ..color = handleOutlineColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.butt;
+      canvas.drawRRect(handleRadius.toRRect(rect), handleOutlinePaint);
     }
   }
 
   @override
-  bool shouldRepaint(_HandlePainter oldDelegate) => true;
+  bool shouldRepaint(_DividerPainter oldDelegate) => true;
 }

@@ -33,6 +33,8 @@ class _App extends StatefulWidget {
 class _AppState extends State<_App> {
   SliderDirection direction = SliderDirection.leftToRight;
   Color dividerColor = Colors.white;
+  Color handleColor = Colors.white;
+  Color handleOutlineColor = Colors.white;
   double dividerWidth = 2;
   bool reactOnHover = false;
   bool hideHandle = false;
@@ -121,6 +123,8 @@ class _AppState extends State<_App> {
                     changePositionOnHover: reactOnHover,
                     direction: direction,
                     dividerColor: dividerColor,
+                    handleColor: handleColor,
+                    handleOutlineColor: handleOutlineColor,
                     dividerWidth: dividerWidth,
                     position: position,
                     onPositionChange: (p) => setState(() => position = p),
@@ -203,6 +207,99 @@ class _AppState extends State<_App> {
               _DividerWithText(
                 text: 'Handle',
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          const Text(
+                            'Color',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          slider(
+                            'R',
+                            handleColor.red.toDouble(),
+                            (v) => setState(() =>
+                                handleColor = handleColor.withRed(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'G',
+                            handleColor.green.toDouble(),
+                            (v) => setState(() =>
+                                handleColor = handleColor.withGreen(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'B',
+                            handleColor.blue.toDouble(),
+                            (v) => setState(() =>
+                                handleColor = handleColor.withBlue(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'A',
+                            handleColor.opacity,
+                            (v) => setState(
+                                () => handleColor = handleColor.withOpacity(v)),
+                            max: 1,
+                            min: 0,
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text(
+                            'Outline',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          slider(
+                            'R',
+                            handleOutlineColor.red.toDouble(),
+                            (v) => setState(() => handleOutlineColor =
+                                handleOutlineColor.withRed(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'G',
+                            handleOutlineColor.green.toDouble(),
+                            (v) => setState(() => handleOutlineColor =
+                                handleOutlineColor.withGreen(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'B',
+                            handleOutlineColor.blue.toDouble(),
+                            (v) => setState(() => handleOutlineColor =
+                                handleOutlineColor.withBlue(v.toInt())),
+                            max: 255,
+                            min: 0,
+                          ),
+                          slider(
+                            'A',
+                            handleOutlineColor.opacity,
+                            (v) => setState(() => handleOutlineColor =
+                                handleOutlineColor.withOpacity(v)),
+                            max: 1,
+                            min: 0,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   switcher('Hide handle', hideHandle, (v) {
                     setState(() => hideHandle = v);
                   }),
@@ -220,12 +317,12 @@ class _AppState extends State<_App> {
                       handleRadius, (v) {
                     setState(() => handleRadius = v);
                   }, max: 50, min: 0),
-                  slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}', handleSizeHeight,
-                      (v) {
+                  slider('Size H: ${handleSizeHeight.toStringAsFixed(2)}',
+                      handleSizeHeight, (v) {
                     setState(() => handleSizeHeight = v);
                   }, max: 100, min: 0),
-                  slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}', handleSizeWidth,
-                      (v) {
+                  slider('Size W: ${handleSizeWidth.toStringAsFixed(2)}',
+                      handleSizeWidth, (v) {
                     setState(() => handleSizeWidth = v);
                   }, max: 100, min: -50),
                 ],

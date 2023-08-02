@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 part 'slider_clipper.dart';
-part 'handle_painter.dart';
+part 'divider_painter.dart';
 
 /// Slider direction.
 enum SliderDirection {
@@ -17,41 +17,6 @@ enum SliderDirection {
   /// Slider direction from bottom to top.
   bottomToTop,
 }
-
-// TODO(carlito): Implement this.
-///// Haptic feedback type.
-//enum HapticFeedbackType {
-//  /// A light impact.
-//  lightImpact,
-//
-//  /// A medium impact.
-//  mediumImpact,
-//
-//  /// A heavy impact.
-//  heavyImpact,
-//
-//  /// A selection click.
-//  selectionClick,
-//
-//  /// A vibration.
-//  vibration;
-//
-//  /// Calls the haptic feedback.
-//  Future<void> call() {
-//    switch (this) {
-//      case HapticFeedbackType.lightImpact:
-//        return HapticFeedback.lightImpact();
-//      case HapticFeedbackType.mediumImpact:
-//        return HapticFeedback.mediumImpact();
-//      case HapticFeedbackType.heavyImpact:
-//        return HapticFeedback.heavyImpact();
-//      case HapticFeedbackType.selectionClick:
-//        return HapticFeedback.selectionClick();
-//      case HapticFeedbackType.vibration:
-//        return HapticFeedback.vibrate();
-//    }
-//  }
-//}
 
 /// {@template flutter_compare_slider}
 ///  A Flutter widget that allows you to compare two images.
@@ -80,6 +45,8 @@ class ImageCompareSlider extends StatefulWidget {
     this.onPositionChange,
     this.position = 0.5,
     this.dividerColor = Colors.white,
+    this.handleColor,
+    this.handleOutlineColor,
     this.dividerWidth = 2.5,
     this.handleSize = const Size(20, 20),
     this.handleRadius = const BorderRadius.all(Radius.circular(10)),
@@ -127,6 +94,12 @@ class ImageCompareSlider extends StatefulWidget {
 
   /// Color of the divider
   final Color dividerColor;
+
+  /// Color of the divider
+  final Color? handleColor;
+
+  /// Color of the divider
+  final Color? handleOutlineColor;
 
   /// Width of the divider
   final double dividerWidth;
@@ -217,10 +190,6 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
       setState(() => handlePosition = handlePos);
     }
 
-    // TODO(carlito): Implement these features.
-    // if (widget.onlyHandleDraggable) {}
-    // if (widget.enableHapticFeedback) widget.hapticFeedbackType.call();
-
     updatePosition(newPosition);
   }
 
@@ -282,9 +251,13 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
               child: secondImage,
             ),
             CustomPaint(
-              painter: _HandlePainter(
+              painter: _DividerPainter(
                 position: position,
                 color: widget.dividerColor,
+                handleColor: widget.handleColor ?? widget.dividerColor,
+                handleOutlineColor: widget.handleOutlineColor ??
+                    widget.handleColor ??
+                    widget.dividerColor,
                 strokeWidth: widget.dividerWidth,
                 portrait: widget.portrait,
                 fillHandle: widget.fillHandle,

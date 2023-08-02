@@ -1,3 +1,7 @@
+# 2.8.0
+
+- feat: Adds handleColor and handleOutlineColor to allow the customization of the handle color and outline color
+
 # 2.7.0
 
 - fix: itemBuilderOne and itemBuilderTwo now have context as a parameter
