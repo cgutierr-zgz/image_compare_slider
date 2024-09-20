@@ -195,7 +195,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
 
   Image generateImage(Image image) => Image(
         image: image.image,
-        fit: BoxFit.contain,
+        fit: image.fit,
         /* Gathered properties */
         color: image.color,
         colorBlendMode: image.colorBlendMode,
@@ -211,9 +211,9 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
         opacity: image.opacity,
         repeat: image.repeat,
         semanticLabel: image.semanticLabel,
+        width: image.width,
+        height: image.height,
         /* Not used properties */
-        // width: image.width,
-        // height: image.height,
         // centerSlice: image.centerSlice,
       );
 
