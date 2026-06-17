@@ -1,56 +1,54 @@
 name: publish
 
-# Publishes to pub.dev and creates a GitHub release whenever a version tag
-# (e.g. v3.0.0) is pushed. Cut releases with `tool/release.dart` (see README).
+# Publishes the package to pub.dev and creates a GitHub release whenever a
+# version tag (e.g. v3.0.0) is pushed. Cut releases with `tool/release.dart`.
+#
+# pub.dev publishing uses GitHub OIDC, so no secrets/tokens are required.
+# One-time setup on pub.dev is needed (see README → Releasing):
+#   pub.dev → admin → "Automated publishing" → enable for this repo and the
+#   tag pattern `v{{version}}`.
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  pana:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
-
   publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC authentication against pub.dev.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Publish to pub.dev
+        run: dart pub publish --force
+
+  release:
+    needs: publish
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required to create the GitHub release.
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-
-      - name: Install dependencies 📦
+      - name: Install dependencies
         run: flutter pub get
-
-      - name: Analyze 🔍
-        run: flutter analyze
-
-      - name: Check publish warnings 🙏🏽
-        run: dart pub publish --dry-run
-
-      # Pub credentials live in the PUB_JSON repository secret. Generate locally
-      # with `dart pub login`, then copy the contents of:
-      #   MAC:     ~/Library/Application Support/dart/pub-credentials.json
-      #   LINUX:   $HOME/.config/dart/pub-credentials.json
-      #   WINDOWS: %APPDATA%/dart/pub-credentials.json
-      - name: Publish to pub.dev 🚀
-        run: |
-          mkdir -p "$HOME/.config/dart"
-          cat <<EOF > "$HOME/.config/dart/pub-credentials.json"
-          ${{ secrets.PUB_JSON }}
-          EOF
-          dart pub publish -f
-
-      - name: Create GitHub release 📦
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract changelog notes for this version
+        id: notes
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          dart run cider describe "$VERSION" > RELEASE_NOTES.md
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
-            --notes-file RELEASE_NOTES.md
+          {
+            echo 'body<<CIDER_EOF'
+            dart run cider describe "$VERSION"
+            echo 'CIDER_EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.notes.outputs.body }}

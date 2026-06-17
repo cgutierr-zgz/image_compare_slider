@@ -246,9 +246,13 @@ git push --follow-tags
 ```
 
 You can also run the **Release: …** entries in the VS Code Run & Debug panel.
-Pushing a `v*` tag triggers `.github/workflows/publish.yaml`, which publishes to
-pub.dev (using the `PUB_JSON` secret) and creates a GitHub release with notes
+Pushing a version tag triggers `.github/workflows/publish.yaml`, which publishes
+to pub.dev (via GitHub OIDC, no secrets) and creates a GitHub release with notes
 from the matching `CHANGELOG.md` section.
+
+> One-time setup: on pub.dev go to the package admin page → *Automated
+> publishing* → enable GitHub Actions publishing for
+> `cgutierr-zgz/image_compare_slider` with the tag pattern `v{{version}}`.
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
 [ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml
