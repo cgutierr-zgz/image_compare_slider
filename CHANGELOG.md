@@ -1,4 +1,5 @@
 # Changelog
+## 3.0.1 - 2026-06-17
 ## 3.0.0 - 2026-06-17
 ### Added
 - **Zoom & pan** — `zoomable`/`pannable` pinch, drag and double-tap zoom applied to both images at once (closes #17).
