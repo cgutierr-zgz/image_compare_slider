@@ -1,69 +1,127 @@
-# 2.8.0
+# Changelog
 
-- feat: Adds handleColor and handleOutlineColor to allow the customization of the handle color and outline color
+## Unreleased
 
-# 2.7.0
+### Added
 
-- fix: itemBuilderOne and itemBuilderTwo now have context as a parameter
-- feat: Adds photoRadius to allow the customization of the radius of the images
+- **Zoom & pan** — `zoomable`/`pannable` pinch, drag and double-tap zoom applied to both images at once (closes #17).
+- **Rotation with lock** — new `ImageCompareSliderController` rotates either image in either direction, with `lockRotation` to rotate both together; also drives zoom, pan, position and `reset()` (closes #22).
+- **Custom handle** — `handleBuilder` replaces the painted handle with any draggable widget (closes #2).
+- **Match image sizes** — `fit` + `aspectRatio` force differently-sized images into the same box (closes #15).
+- `onlyHandleDraggable`, `minScale`, `maxScale`, `doubleTapToZoom`, `doubleTapScale`, `enableGestureRotation`.
 
-# 2.6.0
+### Changed
 
-- fix: Fixes the handle being painted relative to the parent widget instead of the canvas
+- **BREAKING:** bumps the SDK constraint to `>=3.0.0 <4.0.0` (requires Dart 3 / Flutter 3.10+). The public API is otherwise backwards compatible.
 
-# 2.5.0
+## 2.8.0 - 2023-08-02
 
-- feat: changes handleSize from double to Size to allow the customization of the handle width and height independently
+### Added
 
-# 2.4.0
+- `handleColor` and `handleOutlineColor` to customize the handle color and outline color.
 
-- feat: adds handleFollowsPosition to allow the handle to follow the position of the slider
+## 2.7.0 - 2023-03-14
 
-# 2.3.0+3
+### Added
 
-- fix: updates screenshots
+- `photoRadius` to customize the radius of the images.
 
-# 2.3.0+2
+### Fixed
 
-- fix: updates README.md
+- `itemBuilderOne` and `itemBuilderTwo` now receive `context` as a parameter.
 
-# 2.3.0+1
+## 2.6.0 - 2023-03-06
 
-- fix: updates README.md
+### Fixed
 
-# 2.3.0
+- Handle being painted relative to the parent widget instead of the canvas.
 
-- feat: changes ImageProvider<Object> to Image, to allow the use of custom color/blendMode, etc... directly by the user
+## 2.5.0 - 2023-02-27
 
-- feat: renames wrapper to itemOneBuilder and itemTwoBuilder
+### Changed
 
-- fix: slider now clips both images, each one with its own direction
+- `handleSize` changed from `double` to `Size` to customize the handle width and height independently.
 
-# 2.2.0
+## 2.4.0 - 2023-02-22
 
-- feat: imageFilter/ColorFilter was replacer by itemWrapper to allow the customization of both items directly to the user
+### Added
 
-- feat: improves the documentation and adds a new example
+- `handleFollowsPosition` to let the handle follow the position of the slider.
 
-# 2.1.0
+## 2.3.0+3 - 2023-02-22
 
-- feat: renames handleRadius to handleSize and adds handleRadius to customize the radius of the handle
+### Fixed
 
-- feat adds ImageFilter, ColorFilter, Color and BlendMode to both images
+- Updates screenshots.
 
-# 2.0.1
+## 2.3.0+2 - 2023-02-22
 
-- fix: changes Stack fit to passthrough
+### Fixed
 
-# 2.0.0+1
+- Updates `README.md`.
 
-- fix: updates to the pipeline
+## 2.3.0+1 - 2023-02-22
 
-# 2.0.0
+### Fixed
 
-- feat: removes the imageWidth and imageHeight parameters
-- feat: removes the Custom handler and adds handleRadius, fillHandle, hideHandle , and handlePosition
+- Updates `README.md`.
 
-# 1.0.0
+## 2.3.0 - 2023-02-22
 
-- feat: initial release 🎉
+### Changed
+
+- `ImageProvider<Object>` replaced by `Image`, to allow custom color/blendMode directly by the user.
+- Renames `wrapper` to `itemOneBuilder` and `itemTwoBuilder`.
+
+### Fixed
+
+- Slider now clips both images, each one with its own direction.
+
+## 2.2.0 - 2023-02-21
+
+### Added
+
+- Improved documentation and a new example.
+
+### Changed
+
+- `imageFilter`/`ColorFilter` replaced by `itemWrapper` to allow customizing both items directly.
+
+## 2.1.0 - 2023-02-21
+
+### Added
+
+- `ImageFilter`, `ColorFilter`, `Color` and `BlendMode` for both images.
+
+### Changed
+
+- Renames `handleRadius` to `handleSize` and adds `handleRadius` to customize the radius of the handle.
+
+## 2.0.1 - 2023-02-21
+
+### Fixed
+
+- Changes `Stack` fit to `passthrough`.
+
+## 2.0.0+1 - 2023-02-20
+
+### Fixed
+
+- Pipeline updates.
+
+## 2.0.0 - 2023-02-20
+
+### Added
+
+- `handleRadius`, `fillHandle`, `hideHandle` and `handlePosition`.
+
+### Removed
+
+- The `imageWidth` and `imageHeight` parameters.
+- The custom handler.
+
+## 1.0.0 - 2023-02-20
+
+### Added
+
+- Initial release 🎉

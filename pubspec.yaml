@@ -1,6 +1,6 @@
 name: image_compare_slider
-description: Easily compare two images with a slider and a draggable line/handle, fully customizable.
-version: 2.8.0
+description: Easily compare two images with a slider and a draggable line/handle, fully customizable, with zoom, pan and rotation.
+version: 2.0.0
 
 repository: https://github.com/cgutierr-zgz/image_compare_slider
 homepage: https://github.com/cgutierr-zgz/image_compare_slider
@@ -20,18 +20,20 @@ screenshots:
     path: screenshots/example4.png
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
+  cider: ^0.2.10
   flutter_test:
     sdk: flutter
   mocktail: ">=0.3.0 <2.0.0"
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^10.0.0
 
 flutter:
   assets:

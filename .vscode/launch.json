@@ -1,0 +1,58 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "example (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "example",
+      "presentation": { "group": "1_example", "order": 1 }
+    },
+    {
+      "name": "example (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "example",
+      "flutterMode": "profile",
+      "presentation": { "group": "1_example", "order": 2 }
+    },
+    {
+      "name": "example (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "example",
+      "flutterMode": "release",
+      "presentation": { "group": "1_example", "order": 3 }
+    },
+    {
+      "name": "Release: patch (x.x.+1)",
+      "type": "dart",
+      "request": "launch",
+      "program": "tool/release.dart",
+      "args": ["patch", "--push"],
+      "console": "integratedTerminal",
+      "presentation": { "group": "4_release", "order": 1 }
+    },
+    {
+      "name": "Release: minor (x.+1.0)",
+      "type": "dart",
+      "request": "launch",
+      "program": "tool/release.dart",
+      "args": ["minor", "--push"],
+      "console": "integratedTerminal",
+      "presentation": { "group": "4_release", "order": 2 }
+    },
+    {
+      "name": "Release: major (+1.0.0)",
+      "type": "dart",
+      "request": "launch",
+      "program": "tool/release.dart",
+      "args": ["major", "--push"],
+      "console": "integratedTerminal",
+      "presentation": { "group": "4_release", "order": 3 }
+    }
+  ]
+}

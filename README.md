@@ -1,10 +1,8 @@
-⚠️ I'm looking for someone with time to mantain the repo so I can transfer it :'(
-
 # Image Compare Slider
 
 [![ci][ci_badge]][ci_link] [![pub package][pub_badge]][pub_link] ![Coverage badge][coverage_badge] [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link] [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason) [![License: MIT][license_badge]][license_link]
 
-Inspired by [react-compare-slider](https://www.npmjs.com/package/react-compare-slider), this package allows you to easily compare two images with a slider.
+Inspired by [react-compare-slider](https://www.npmjs.com/package/react-compare-slider), this package allows you to easily compare two images with a slider — with **zoom & pan**, **rotation (with lock)**, **custom handles** and **size matching**.
 
 **PR's are welcome!**
 
@@ -72,7 +70,18 @@ You can customize the widget with the following parameters:
 | `dividerWidth` | `double` | The width of the divider |
 | `itemOneBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the first image |
 | `itemTwoBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the second image |
-| `photoRadius` | `BorderRadiusGeometry` | Radius of the photo.
+| `photoRadius` | `BorderRadiusGeometry` | Radius of the photo |
+| `controller` | `ImageCompareSliderController?` | Drives position, zoom, pan and rotation programmatically |
+| `handleBuilder` | `HandleBuilder?` | Builds a fully custom, draggable handle widget |
+| `onlyHandleDraggable` | `bool` | Restrict slider movement to dragging the handle |
+| `fit` | `BoxFit` | How both images are inscribed into their box (default `BoxFit.contain`) |
+| `aspectRatio` | `double?` | Force both images into the same box to match different sizes |
+| `zoomable` | `bool` | Enable pinch / double-tap zoom on both images |
+| `pannable` | `bool` | Enable drag-to-pan on both images |
+| `enableGestureRotation` | `bool` | Enable two-finger rotation gestures |
+| `doubleTapToZoom` | `bool` | Toggle zoom on double-tap (default `true`) |
+| `minScale` / `maxScale` | `double` | Zoom bounds (default `1.0` / `5.0`) |
+| `doubleTapScale` | `double` | Zoom factor applied on double-tap (default `2.5`) |
 
 
 If you want to add some effects you can use the `itemOneBuilder` and `itemTwoBuilder` parameters to wrap the images with a `ColorFilter` or `ImageFilter`, or any other widget you want.
@@ -135,28 +144,111 @@ Will result in:
 
 <img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example4.png" width="300">
 
-If you are having problems because height/width is not the same for both images, consider using Intrinsics in the builder:
+## Zoom & pan 🔍
+
+Enable `zoomable` and/or `pannable` to pinch-zoom and drag both images at once
+while keeping them perfectly aligned. Double-tap toggles zoom. Dragging the
+handle still moves the slider, even while zoomed in.
 
 ```dart
-// ...
 ImageCompareSlider(
   itemOne: const Image.asset('...'),
   itemTwo: const Image.asset('...'),
-  itemOneBuilder: (child, context) => IntrinsicHeight(child: child),
-  itemTwoBuilder: (child, context) => IntrinsicHeight(child: child),
-  // or
-  itemOneBuilder: (child, context) => IntrinsicWidth(child: child),
-  itemTwoBuilder: (child, context) => IntrinsicWidth(child: child),
+  zoomable: true,
+  pannable: true,
+  maxScale: 6, // optional zoom bounds
 )
 ```
 
-## TODO 📝
+## Rotation with lock 🔄
 
-- [ ] Add custom handle widget
-- [ ] Add custom divider widget (wavy, dashed, etc)
-- [ ] Add shadow to handle/divider
-- [ ] Enable extra size for the divider so the handle/divider can be bigger than the image | [example](https://github.com/cgutierr-zgz/image_compare_slider/issues/11#issue-1833036061)
+Pass an `ImageCompareSliderController` to rotate either image in either
+direction. Turn on `lockRotation` to rotate both images together in the same
+cycle. The controller also exposes zoom, pan, position and a `reset()`.
 
+```dart
+final controller = ImageCompareSliderController();
+
+ImageCompareSlider(
+  controller: controller,
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+);
+
+// Rotate the left image a quarter turn clockwise.
+controller.rotateOne(ImageCompareSliderController.quarterTurn);
+// Rotate the right image counter-clockwise.
+controller.rotateTwo(-ImageCompareSliderController.quarterTurn);
+// Lock so both rotate together.
+controller.lockRotation = true;
+// Snap the second image to the first's angle.
+controller.matchRotation();
+// Reset zoom/pan/rotation.
+controller.reset();
+```
+
+Remember to `dispose()` controllers you create yourself.
+
+## Custom handle ✋
+
+Replace the painted handle with any widget via `handleBuilder`. It is centered
+on the handle anchor and stays draggable. The divider line is still drawn.
+
+```dart
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  handleBuilder: (context, position, portrait) => Container(
+    padding: const EdgeInsets.all(6),
+    decoration: const BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+    ),
+    child: const Icon(Icons.unfold_more, size: 18),
+  ),
+)
+```
+
+## Matching image sizes 📐
+
+If your images have different sizes or aspect ratios, set an `aspectRatio` and
+a `fit` (e.g. `BoxFit.cover`) so both are forced into the same box and line up.
+
+```dart
+ImageCompareSlider(
+  itemOne: const Image.asset('...'), // 4000x3000
+  itemTwo: const Image.asset('...'), // 1920x1080
+  fit: BoxFit.cover,
+  aspectRatio: 16 / 9,
+)
+```
+
+## Releasing 🚀
+
+Releases are driven by the changelog using [`cider`](https://pub.dev/packages/cider).
+During development, record changes under the `## Unreleased` section of
+`CHANGELOG.md` (manually, or with `dart run cider log added "..."`).
+
+When ready, run the helper script. It bumps the version, promotes the
+`Unreleased` section to the new version, commits and creates the `v<version>`
+tag:
+
+```bash
+dart run tool/release.dart            # patch release (default)
+dart run tool/release.dart minor      # or: major | patch | build | breaking | none
+dart run tool/release.dart minor --push   # cut and push in one step
+```
+
+By default it does **not** push. Push the tag to publish:
+
+```bash
+git push --follow-tags
+```
+
+You can also run the **Release: …** entries in the VS Code Run & Debug panel.
+Pushing a `v*` tag triggers `.github/workflows/publish.yaml`, which publishes to
+pub.dev (using the `PUB_JSON` secret) and creates a GitHub release with notes
+from the matching `CHANGELOG.md` section.
 
 [ci_badge]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml/badge.svg
 [ci_link]: https://github.com/cgutierr-zgz/image_compare_slider/actions/workflows/publish.yaml

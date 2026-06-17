@@ -52,6 +52,29 @@ class _AppState extends State<_App> {
   Widget Function(Widget)? itemOneWrapper;
   Widget Function(Widget)? itemTwoWrapper;
 
+  // New features.
+  final controller = ImageCompareSliderController(maxScale: 6);
+  bool zoomable = false;
+  bool pannable = false;
+  bool gestureRotation = false;
+  bool lockRotation = false;
+  bool useCustomHandle = false;
+  bool matchSizes = false;
+  int handleStyle = 0; // 0..9
+
+  @override
+  void initState() {
+    super.initState();
+    // Keep the zoom readout / button states in sync with the controller.
+    controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,13 +143,13 @@ class _AppState extends State<_App> {
                     ),
 
                     /* Optional */
+                    controller: controller,
                     changePositionOnHover: reactOnHover,
                     direction: direction,
                     dividerColor: dividerColor,
                     handleColor: handleColor,
                     handleOutlineColor: handleOutlineColor,
                     dividerWidth: dividerWidth,
-                    position: position,
                     onPositionChange: (p) => setState(() => position = p),
                     hideHandle: hideHandle,
                     handlePosition: handlePosition,
@@ -139,12 +162,29 @@ class _AppState extends State<_App> {
                     itemTwoBuilder: (child, context) =>
                         itemTwoWrapper?.call(child) ?? child,
                     handleFollowsPosition: handleFollowsP,
+                    // New features.
+                    zoomable: zoomable,
+                    pannable: pannable,
+                    enableGestureRotation: gestureRotation,
+                    fit: matchSizes ? BoxFit.cover : BoxFit.contain,
+                    aspectRatio: matchSizes ? 16 / 9 : null,
+                    handleBuilder: useCustomHandle
+                        ? (context, position, portrait) => _customHandle(
+                              handleStyle,
+                              position,
+                              portrait,
+                              handleColor,
+                            )
+                        : null,
                   ),
                 ),
               ),
               const SizedBox(height: 10),
               slider('Position: ${position.toStringAsFixed(2)}', position, (v) {
-                setState(() => position = v);
+                setState(() {
+                  position = v;
+                  controller.position = v;
+                });
               }),
               Center(
                 child: switcher('React on hover', reactOnHover, (v) {
@@ -165,7 +205,7 @@ class _AppState extends State<_App> {
                           }, max: 25, min: 0),
                           slider(
                             'R',
-                            dividerColor.red.toDouble(),
+                            dividerColor.r255.toDouble(),
                             (v) => setState(() =>
                                 dividerColor = dividerColor.withRed(v.toInt())),
                             max: 255,
@@ -173,7 +213,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'G',
-                            dividerColor.green.toDouble(),
+                            dividerColor.g255.toDouble(),
                             (v) => setState(() => dividerColor =
                                 dividerColor.withGreen(v.toInt())),
                             max: 255,
@@ -181,7 +221,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'B',
-                            dividerColor.blue.toDouble(),
+                            dividerColor.b255.toDouble(),
                             (v) => setState(() => dividerColor =
                                 dividerColor.withBlue(v.toInt())),
                             max: 255,
@@ -189,9 +229,9 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'A',
-                            dividerColor.opacity,
+                            dividerColor.a,
                             (v) => setState(() =>
-                                dividerColor = dividerColor.withOpacity(v)),
+                                dividerColor = dividerColor.withValues(alpha: v)),
                             max: 1,
                             min: 0,
                           ),
@@ -222,7 +262,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'R',
-                            handleColor.red.toDouble(),
+                            handleColor.r255.toDouble(),
                             (v) => setState(() =>
                                 handleColor = handleColor.withRed(v.toInt())),
                             max: 255,
@@ -230,7 +270,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'G',
-                            handleColor.green.toDouble(),
+                            handleColor.g255.toDouble(),
                             (v) => setState(() =>
                                 handleColor = handleColor.withGreen(v.toInt())),
                             max: 255,
@@ -238,7 +278,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'B',
-                            handleColor.blue.toDouble(),
+                            handleColor.b255.toDouble(),
                             (v) => setState(() =>
                                 handleColor = handleColor.withBlue(v.toInt())),
                             max: 255,
@@ -246,9 +286,9 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'A',
-                            handleColor.opacity,
+                            handleColor.a,
                             (v) => setState(
-                                () => handleColor = handleColor.withOpacity(v)),
+                                () => handleColor = handleColor.withValues(alpha: v)),
                             max: 1,
                             min: 0,
                           ),
@@ -266,7 +306,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'R',
-                            handleOutlineColor.red.toDouble(),
+                            handleOutlineColor.r255.toDouble(),
                             (v) => setState(() => handleOutlineColor =
                                 handleOutlineColor.withRed(v.toInt())),
                             max: 255,
@@ -274,7 +314,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'G',
-                            handleOutlineColor.green.toDouble(),
+                            handleOutlineColor.g255.toDouble(),
                             (v) => setState(() => handleOutlineColor =
                                 handleOutlineColor.withGreen(v.toInt())),
                             max: 255,
@@ -282,7 +322,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'B',
-                            handleOutlineColor.blue.toDouble(),
+                            handleOutlineColor.b255.toDouble(),
                             (v) => setState(() => handleOutlineColor =
                                 handleOutlineColor.withBlue(v.toInt())),
                             max: 255,
@@ -290,9 +330,9 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'A',
-                            handleOutlineColor.opacity,
+                            handleOutlineColor.a,
                             (v) => setState(() => handleOutlineColor =
-                                handleOutlineColor.withOpacity(v)),
+                                handleOutlineColor.withValues(alpha: v)),
                             max: 1,
                             min: 0,
                           ),
@@ -337,7 +377,7 @@ class _AppState extends State<_App> {
                         children: [
                           slider(
                             'R',
-                            itemOneColor?.red.toDouble() ?? 0,
+                            itemOneColor?.r255.toDouble() ?? 0,
                             (v) => setState(() => itemOneColor =
                                 itemOneColor?.withRed(v.toInt()) ??
                                     Colors.white),
@@ -346,7 +386,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'G',
-                            itemOneColor?.green.toDouble() ?? 0,
+                            itemOneColor?.g255.toDouble() ?? 0,
                             (v) => setState(() => itemOneColor =
                                 itemOneColor?.withGreen(v.toInt()) ??
                                     Colors.white),
@@ -355,7 +395,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'B',
-                            itemOneColor?.blue.toDouble() ?? 0,
+                            itemOneColor?.b255.toDouble() ?? 0,
                             (v) => setState(() => itemOneColor =
                                 itemOneColor?.withBlue(v.toInt()) ??
                                     Colors.white),
@@ -364,9 +404,9 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'A',
-                            itemOneColor?.opacity.toDouble() ?? 0,
+                            itemOneColor?.a.toDouble() ?? 0,
                             (v) => setState(() => itemOneColor =
-                                itemOneColor?.withOpacity(v) ?? Colors.white),
+                                itemOneColor?.withValues(alpha: v) ?? Colors.white),
                             max: 1,
                             min: 0,
                           ),
@@ -410,7 +450,7 @@ class _AppState extends State<_App> {
                         children: [
                           slider(
                             'R',
-                            itemTwoColor?.red.toDouble() ?? 0,
+                            itemTwoColor?.r255.toDouble() ?? 0,
                             (v) => setState(() => itemTwoColor =
                                 itemTwoColor?.withRed(v.toInt()) ??
                                     Colors.white),
@@ -419,7 +459,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'G',
-                            itemTwoColor?.green.toDouble() ?? 0,
+                            itemTwoColor?.g255.toDouble() ?? 0,
                             (v) => setState(() => itemTwoColor =
                                 itemTwoColor?.withGreen(v.toInt()) ??
                                     Colors.white),
@@ -428,7 +468,7 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'B',
-                            itemTwoColor?.blue.toDouble() ?? 0,
+                            itemTwoColor?.b255.toDouble() ?? 0,
                             (v) => setState(() => itemTwoColor =
                                 itemTwoColor?.withBlue(v.toInt()) ??
                                     Colors.white),
@@ -437,9 +477,9 @@ class _AppState extends State<_App> {
                           ),
                           slider(
                             'A',
-                            itemTwoColor?.opacity.toDouble() ?? 0,
+                            itemTwoColor?.a.toDouble() ?? 0,
                             (v) => setState(() => itemTwoColor =
-                                itemTwoColor?.withOpacity(v) ?? Colors.white),
+                                itemTwoColor?.withValues(alpha: v) ?? Colors.white),
                             max: 1,
                             min: 0,
                           ),
@@ -484,6 +524,98 @@ class _AppState extends State<_App> {
                   )
                 ],
               ),
+              _DividerWithText(
+                text: 'Zoom / Pan / Rotate',
+                children: [
+                  switcher('Zoomable (pinch / double-tap)', zoomable, (v) {
+                    setState(() => zoomable = v);
+                  }),
+                  switcher('Pannable (drag)', pannable, (v) {
+                    setState(() => pannable = v);
+                  }),
+                  switcher('Two-finger gesture rotation', gestureRotation, (v) {
+                    setState(() => gestureRotation = v);
+                  }),
+                  switcher('Custom handle widget', useCustomHandle, (v) {
+                    setState(() => useCustomHandle = v);
+                  }),
+                  if (useCustomHandle)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        text('Handle style ${handleStyle + 1}/10'),
+                        const SizedBox(width: 8),
+                        _actionButton(
+                          'Next ▷',
+                          () => setState(
+                            () => handleStyle = (handleStyle + 1) % 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  switcher('Match sizes (16:9 cover)', matchSizes, (v) {
+                    setState(() => matchSizes = v);
+                  }),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      'Zoom: ${controller.scale.toStringAsFixed(2)}x',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _actionButton('Zoom +', () => controller.zoomBy(1.25)),
+                      _actionButton('Zoom -', () => controller.zoomBy(0.8)),
+                      _actionButton('Reset', controller.reset),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  text('Rotate left image'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _actionButton(
+                        '⟲ 90°',
+                        () => controller.rotateOne(
+                          -ImageCompareSliderController.quarterTurn,
+                        ),
+                      ),
+                      _actionButton(
+                        '⟳ 90°',
+                        () => controller.rotateOne(
+                          ImageCompareSliderController.quarterTurn,
+                        ),
+                      ),
+                    ],
+                  ),
+                  text('Rotate right image'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _actionButton(
+                        '⟲ 90°',
+                        () => controller.rotateTwo(
+                          -ImageCompareSliderController.quarterTurn,
+                        ),
+                      ),
+                      _actionButton(
+                        '⟳ 90°',
+                        () => controller.rotateTwo(
+                          ImageCompareSliderController.quarterTurn,
+                        ),
+                      ),
+                    ],
+                  ),
+                  switcher('🔒 Lock rotation (rotate both)', lockRotation, (v) {
+                    setState(() {
+                      lockRotation = v;
+                      controller.lockRotation = v;
+                    });
+                  }),
+                ],
+              ),
               const SizedBox(height: 100)
             ],
           ),
@@ -519,6 +651,19 @@ class _AppState extends State<_App> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _actionButton(String label, VoidCallback onPressed) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: CupertinoButton(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        color: Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(20),
+        onPressed: onPressed,
+        child: Text(label, style: const TextStyle(fontSize: 14)),
+      ),
     );
   }
 
@@ -625,4 +770,139 @@ class _DividerWithTextState extends State<_DividerWithText> {
       ],
     );
   }
+}
+
+/// Demonstrates that `handleBuilder` can return ANY widget — these are 10
+/// different examples cycled in the example app. [pos] is the divider position
+/// (0-1), [portrait] is true for top/bottom directions.
+Widget _customHandle(int style, double pos, bool portrait, Color color) {
+  final dark = Colors.grey.shade900;
+  // Rotate directional content for portrait sliders.
+  Widget orient(Widget child) =>
+      portrait ? RotatedBox(quarterTurns: 1, child: child) : child;
+
+  const shadow = [
+    BoxShadow(color: Colors.black38, blurRadius: 4, offset: Offset(0, 2)),
+  ];
+
+  switch (style) {
+    case 0: // Rounded pill with chevrons
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: shadow,
+        ),
+        child: orient(Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.chevron_left, color: dark, size: 18),
+            Icon(Icons.chevron_right, color: dark, size: 18),
+          ],
+        )),
+      );
+    case 1: // Plain circle with drag icon
+      return Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          boxShadow: shadow,
+        ),
+        child: orient(Icon(Icons.drag_indicator, color: dark, size: 22)),
+      );
+    case 2: // Pill showing the position percentage
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: shadow,
+        ),
+        child: Text(
+          '${(pos * 100).round()}%',
+          style: TextStyle(color: dark, fontWeight: FontWeight.bold),
+        ),
+      );
+    case 3: // Thin bar
+      return orient(Container(
+        width: 6,
+        height: 60,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(3),
+          boxShadow: shadow,
+        ),
+      ));
+    case 4: // Diamond
+      return Transform.rotate(
+        angle: 0.7853981633974483, // 45°
+        child: Container(
+          width: 26,
+          height: 26,
+          decoration: BoxDecoration(color: color, boxShadow: shadow),
+        ),
+      );
+    case 5: // Outlined circle with double chevron
+      return Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(color: color, width: 3),
+        ),
+        child: orient(Icon(Icons.unfold_more, color: color, size: 24)),
+      );
+    case 6: // Translucent "glass" circle
+      return Container(
+        width: 46,
+        height: 46,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.35),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white70, width: 2),
+        ),
+        child: orient(Icon(Icons.swap_horiz, color: Colors.white, size: 22)),
+      );
+    case 7: // Square card with swap icon
+      return Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: shadow,
+        ),
+        child: orient(Icon(Icons.compare_arrows, color: dark, size: 22)),
+      );
+    case 8: // Gradient pill
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Colors.purpleAccent, Colors.blueAccent],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: shadow,
+        ),
+        child: orient(const Icon(Icons.code, color: Colors.white, size: 18)),
+      );
+    case 9: // Emoji
+      return orient(
+        const Text('👈👉', style: TextStyle(fontSize: 24)),
+      );
+    default:
+      return const SizedBox.shrink();
+  }
+}
+
+/// Helpers to read a [Color]'s 8-bit channels (the `.red`/`.green`/`.blue`
+/// getters are deprecated in favour of the 0-1 `.r`/`.g`/`.b` doubles).
+extension on Color {
+  int get r255 => (r * 255).round();
+  int get g255 => (g * 255).round();
+  int get b255 => (b * 255).round();
 }
