@@ -19,11 +19,16 @@ jobs:
       id-token: write # Required for OIDC authentication against pub.dev.
     steps:
       - uses: actions/checkout@v4
+      # setup-dart provisions the OIDC token used to authenticate with pub.dev.
+      # Without it, `dart pub publish` falls back to interactive OAuth and hangs.
+      - uses: dart-lang/setup-dart@v1
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
       - name: Install dependencies
         run: flutter pub get
+      - name: Check publish warnings
+        run: dart pub publish --dry-run
       - name: Publish to pub.dev
         run: dart pub publish --force
 
