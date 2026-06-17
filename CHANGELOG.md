@@ -1,5 +1,8 @@
 # Changelog
 ## 3.0.1 - 2026-06-17
+### Changed
+- CI: provision OIDC for pub.dev publishing (adds `dart-lang/setup-dart` and a `dart pub publish --dry-run` warnings check to the publish workflow). No library code changes.
+
 ## 3.0.0 - 2026-06-17
 ### Added
 - **Zoom & pan** — `zoomable`/`pannable` pinch, drag and double-tap zoom applied to both images at once (closes #17).
