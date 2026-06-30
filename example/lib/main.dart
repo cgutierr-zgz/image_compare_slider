@@ -36,6 +36,7 @@ class _AppState extends State<_App> {
   Color handleColor = Colors.white;
   Color handleOutlineColor = Colors.white;
   double dividerWidth = 2;
+  int lineStyle = 0; // 0 solid, 1 dashed, 2 dotted
   bool reactOnHover = false;
   bool hideHandle = false;
   double position = 0.5;
@@ -150,6 +151,7 @@ class _AppState extends State<_App> {
                     handleColor: handleColor,
                     handleOutlineColor: handleOutlineColor,
                     dividerWidth: dividerWidth,
+                    dividerLineStyle: _lineStyle(lineStyle),
                     onPositionChange: (p) => setState(() => position = p),
                     hideHandle: hideHandle,
                     handlePosition: handlePosition,
@@ -203,6 +205,23 @@ class _AppState extends State<_App> {
                               dividerWidth, (v) {
                             setState(() => dividerWidth = v);
                           }, max: 25, min: 0),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 4,
+                            children: [
+                              for (final (i, label) in const [
+                                (0, 'Solid'),
+                                (1, 'Dashed'),
+                                (2, 'Dotted'),
+                              ])
+                                ChoiceChip(
+                                  label: Text(label),
+                                  selected: lineStyle == i,
+                                  onSelected: (_) =>
+                                      setState(() => lineStyle = i),
+                                ),
+                            ],
+                          ),
                           slider(
                             'R',
                             dividerColor.r255.toDouble(),
@@ -665,6 +684,17 @@ class _AppState extends State<_App> {
         child: Text(label, style: const TextStyle(fontSize: 14)),
       ),
     );
+  }
+
+  DividerLineStyle _lineStyle(int style) {
+    switch (style) {
+      case 1:
+        return DividerLineStyle.dashed(dashLength: 12, gapLength: 8);
+      case 2:
+        return DividerLineStyle.dotted(gapLength: 10);
+      default:
+        return const DividerLineStyle.solid();
+    }
   }
 
   Widget switcher(String title, bool value, Function(bool) onChanged) {

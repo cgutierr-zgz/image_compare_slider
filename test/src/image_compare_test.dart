@@ -672,4 +672,93 @@ void main() {
       expect(find.byKey(const Key('h')), findsOneWidget);
     });
   });
+
+  group('DividerLineStyle', () {
+    test('solid is the default and reports isSolid', () {
+      const style = DividerLineStyle.solid();
+      expect(style.isSolid, true);
+      expect(style.pattern, isEmpty);
+      expect(style.strokeCap, StrokeCap.butt);
+    });
+
+    test('default constructor is solid', () {
+      const style = DividerLineStyle();
+      expect(style.isSolid, true);
+    });
+
+    test('dashed builds an on/off pattern', () {
+      final style = DividerLineStyle.dashed(dashLength: 10, gapLength: 4);
+      expect(style.isSolid, false);
+      expect(style.pattern, <double>[10, 4]);
+      expect(style.strokeCap, StrokeCap.butt);
+    });
+
+    test('dotted is a zero-length dash with round caps', () {
+      final style = DividerLineStyle.dotted(gapLength: 7);
+      expect(style.pattern, <double>[0, 7]);
+      expect(style.strokeCap, StrokeCap.round);
+    });
+
+    test('supports a fully custom pattern', () {
+      const style = DividerLineStyle(
+        pattern: <double>[12, 4, 4, 4],
+        strokeCap: StrokeCap.square,
+      );
+      expect(style.pattern, <double>[12, 4, 4, 4]);
+      expect(style.strokeCap, StrokeCap.square);
+    });
+
+    test('equality and hashCode consider pattern and strokeCap', () {
+      final a = DividerLineStyle.dashed();
+      final b = DividerLineStyle.dashed();
+      const c = DividerLineStyle.solid();
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+    });
+
+    testWidgets('is wired through the widget (defaults to solid)',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ImageCompareSlider(
+            itemOne: Image.asset('assets/images/render.png'),
+            itemTwo: Image.asset('assets/images/render_oc.png'),
+          ),
+        ),
+      );
+
+      final slider =
+          tester.widget<ImageCompareSlider>(find.byType(ImageCompareSlider));
+      expect(slider.dividerLineStyle, const DividerLineStyle.solid());
+    });
+
+    testWidgets('dashed and dotted styles paint without error',
+        (tester) async {
+      for (final style in <DividerLineStyle>[
+        DividerLineStyle.dashed(),
+        DividerLineStyle.dotted(),
+        const DividerLineStyle(pattern: <double>[12, 4, 4, 4]),
+      ]) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ImageCompareSlider(
+              direction: SliderDirection.topToBottom,
+              itemOne: Image.asset('assets/images/render.png'),
+              itemTwo: Image.asset('assets/images/render_oc.png'),
+              dividerLineStyle: style,
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(
+          tester
+              .widget<ImageCompareSlider>(find.byType(ImageCompareSlider))
+              .dividerLineStyle,
+          style,
+        );
+      }
+    });
+  });
 }

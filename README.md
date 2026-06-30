@@ -68,6 +68,7 @@ You can customize the widget with the following parameters:
 | `handleColor` | `Color` | The color of the handle |
 | `handleOutlineColor` | `Color` | The color of the handle outline |
 | `dividerWidth` | `double` | The width of the divider |
+| `dividerLineStyle` | `DividerLineStyle` | The line style of the divider: solid, dashed, dotted or a custom dash pattern (default `DividerLineStyle.solid()`) |
 | `itemOneBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the first image |
 | `itemTwoBuilder` | `Widget Function(Widget child, BuildContext context)?` | The wrapper for the second image |
 | `photoRadius` | `BorderRadiusGeometry` | Radius of the photo |
@@ -143,6 +144,54 @@ ImageCompareSlider(
 Will result in:
 
 <img src="https://raw.githubusercontent.com/cgutierr-zgz/image_compare_slider/main/screenshots/example4.png" width="300">
+
+## Line style 〰️
+
+Control how the divider line is stroked with `dividerLineStyle`. Pick a preset
+or build a fully custom dash pattern. This only affects the painted line, not
+the handle.
+
+```dart
+// Solid (the default).
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  dividerLineStyle: const DividerLineStyle.solid(),
+);
+
+// Dashed — dashes of `dashLength` separated by `gapLength` (logical pixels).
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  dividerLineStyle: DividerLineStyle.dashed(dashLength: 10, gapLength: 6),
+);
+
+// Dotted — round dots whose diameter equals `dividerWidth`.
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  dividerWidth: 4,
+  dividerLineStyle: DividerLineStyle.dotted(gapLength: 8),
+);
+
+// Fully custom — a repeating list of alternating on/off lengths, starting
+// with an "on" (drawn) segment. Here: long dash, gap, short dash, gap.
+ImageCompareSlider(
+  itemOne: const Image.asset('...'),
+  itemTwo: const Image.asset('...'),
+  dividerLineStyle: const DividerLineStyle(
+    pattern: <double>[12, 4, 4, 4],
+    strokeCap: StrokeCap.round,
+  ),
+);
+```
+
+| Preset | Description |
+| --- | --- |
+| `DividerLineStyle.solid()` | An unbroken line (default). |
+| `DividerLineStyle.dashed({dashLength, gapLength, strokeCap})` | Evenly spaced dashes separated by gaps. |
+| `DividerLineStyle.dotted({gapLength})` | Round dots sized to `dividerWidth`. |
+| `DividerLineStyle({pattern, strokeCap})` | Any custom repeating dash pattern. |
 
 ## Zoom & pan 🔍
 

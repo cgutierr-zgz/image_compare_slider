@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:image_compare_slider/src/divider_line_style.dart';
 import 'package:image_compare_slider/src/image_compare_controller.dart';
 
 part 'slider_clipper.dart';
@@ -75,6 +76,7 @@ class ImageCompareSlider extends StatefulWidget {
     this.handleColor,
     this.handleOutlineColor,
     this.dividerWidth = 2.5,
+    this.dividerLineStyle = const DividerLineStyle.solid(),
     this.handleSize = const Size(20, 20),
     this.handleRadius = const BorderRadius.all(Radius.circular(10)),
     this.fillHandle = false,
@@ -154,6 +156,14 @@ class ImageCompareSlider extends StatefulWidget {
 
   /// Width of the divider
   final double dividerWidth;
+
+  /// Visual style of the divider line: solid, dashed, dotted, or a fully
+  /// custom dash pattern.
+  ///
+  /// Defaults to [DividerLineStyle.solid]. See [DividerLineStyle] for presets
+  /// and how to build custom patterns. This only affects the painted line, not
+  /// the handle.
+  final DividerLineStyle dividerLineStyle;
 
   /// Handle size.
   final Size handleSize;
@@ -535,6 +545,7 @@ class _ImageCompareSliderState extends State<ImageCompareSlider> {
                 widget.handleColor ??
                 widget.dividerColor,
             strokeWidth: widget.dividerWidth,
+            lineStyle: widget.dividerLineStyle,
             portrait: widget.portrait,
             fillHandle: widget.fillHandle,
             handleSize: widget.handleSize,
