@@ -1,4 +1,5 @@
 # Changelog
+## 3.2.0 - 2026-06-30
 ## 3.1.0 - 2026-06-30
 ### Added
 - **Divider line style** — new `dividerLineStyle` parameter with a `DividerLineStyle` type to draw the divider as a solid, dashed or dotted line, or any fully custom dash pattern. Presets: `DividerLineStyle.solid()`, `DividerLineStyle.dashed()`, `DividerLineStyle.dotted()`, plus a raw `pattern` + `strokeCap` constructor.
